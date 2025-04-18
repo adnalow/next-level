@@ -20,7 +20,6 @@ export async function middleware(req: NextRequest) {
   const publicRoutes = [
     '/auth/login',
     '/auth/signup',
-    '/',
     '/favicon.ico',
   ]
 
@@ -29,6 +28,13 @@ export async function middleware(req: NextRequest) {
     req.nextUrl.pathname === route || 
     req.nextUrl.pathname.startsWith('/api/')
   )
+
+  // Redirect root to signup
+  if (req.nextUrl.pathname === '/') {
+    const redirectUrl = req.nextUrl.clone()
+    redirectUrl.pathname = '/auth/signup'
+    return NextResponse.redirect(redirectUrl)
+  }
 
   // If not a public route and no session, redirect to login
   if (!isPublicRoute && !session) {
