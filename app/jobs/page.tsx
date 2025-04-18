@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { useRouter } from 'next/navigation'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -43,6 +44,7 @@ export default function JobsPage() {
   const [selectedCategory, setSelectedCategory] = useState<JobCategory['value'] | 'all'>('all')
   const [selectedLocation, setSelectedLocation] = useState<string>('')
   const supabase = createClientComponentClient()
+  const router = useRouter()
 
   useEffect(() => {
     fetchJobs()
@@ -170,7 +172,14 @@ export default function JobsPage() {
                 </div>
               </CardContent>
               <div className="p-6 pt-0">
-                <Button className="w-full" variant="outline">
+                <Button 
+                  className="w-full" 
+                  variant="outline" 
+                  onClick={() => {
+                    const cleanId = job.id.toString().trim()
+                    router.push(`/jobs/${cleanId}`)
+                  }}
+                >
                   View Details
                 </Button>
               </div>

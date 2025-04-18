@@ -266,7 +266,7 @@ export default function CreateJobPage() {
                         type="number" 
                         min={1} 
                         max={7} 
-                        {...field}
+                        value={field.value.toString()}
                         onChange={(e) => field.onChange(e.target.valueAsNumber)}
                       />
                     </FormControl>

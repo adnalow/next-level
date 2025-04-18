@@ -2,77 +2,51 @@ import { createMiddlewareClient } from '@supabase/auth-helpers-nextjs'
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
-// Middleware configuration
-export const config = {
-  matcher: [
-    '/((?!api|_next/static|_next/image|assets|favicon.ico|sw.js).*)',
-  ],
-}
-
-export async function middleware(req: NextRequest) {
+export async function middleware(request: NextRequest) {
   const res = NextResponse.next()
-  const supabase = createMiddlewareClient({ req, res })
+  const supabase = createMiddlewareClient({ req: request, res })
 
-  // Refresh session if expired - required for Server Components
-  const { data: { session }, error } = await supabase.auth.getSession()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
 
-  // Public routes that don't require authentication
-  const publicRoutes = [
-    '/auth/login',
-    '/auth/signup',
-    '/favicon.ico',
-  ]
-
-  // Check if the current route is public
-  const isPublicRoute = publicRoutes.some(route => 
-    req.nextUrl.pathname === route || 
-    req.nextUrl.pathname.startsWith('/api/')
-  )
-
-  // Redirect root to signup
-  if (req.nextUrl.pathname === '/') {
-    const redirectUrl = req.nextUrl.clone()
-    redirectUrl.pathname = '/auth/signup'
-    return NextResponse.redirect(redirectUrl)
+  // If user is not signed in and the current path is not /auth/login or /auth/signup
+  // redirect the user to /auth/login
+  if (!session?.user && !['/auth/login', '/auth/signup'].includes(request.nextUrl.pathname)) {
+    return NextResponse.redirect(new URL('/auth/login', request.url))
   }
 
-  // If not a public route and no session, redirect to login
-  if (!isPublicRoute && !session) {
-    const redirectUrl = req.nextUrl.clone()
-    redirectUrl.pathname = '/auth/login'
-    redirectUrl.searchParams.set('redirectedFrom', req.nextUrl.pathname)
-    return NextResponse.redirect(redirectUrl)
+  // If user is signed in and trying to access auth pages, redirect to jobs
+  if (session?.user && ['/auth/login', '/auth/signup'].includes(request.nextUrl.pathname)) {
+    return NextResponse.redirect(new URL('/jobs', request.url))
   }
 
-  // Role-based route protection
-  if (session) {
+  // For authenticated users, check role-based access
+  if (session?.user) {
     const { data: profile } = await supabase
       .from('profiles')
       .select('role')
       .eq('user_id', session.user.id)
       .single()
 
-    // Routes that require job_poster role
-    const jobPosterRoutes = ['/jobs/new']
-    const isJobPosterRoute = jobPosterRoutes.some(route => 
-      req.nextUrl.pathname.startsWith(route)
-    )
-
-    // If trying to access job poster route without proper role
-    if (isJobPosterRoute && profile?.role !== 'job_poster') {
-      // Redirect to home page or show an error page
-      const redirectUrl = req.nextUrl.clone()
-      redirectUrl.pathname = '/'
-      return NextResponse.redirect(redirectUrl)
-    }
-
-    // After successful login, redirect to appropriate dashboard based on role
-    if (req.nextUrl.pathname === '/') {
-      const redirectUrl = req.nextUrl.clone()
-      redirectUrl.pathname = profile?.role === 'job_poster' ? '/jobs/new' : '/jobs'
-      return NextResponse.redirect(redirectUrl)
+    // Redirect job seekers trying to access job posting
+    if (profile?.role === 'job_seeker' && request.nextUrl.pathname === '/jobs/new') {
+      return NextResponse.redirect(new URL('/jobs', request.url))
     }
   }
 
   return res
+}
+
+export const config = {
+  matcher: [
+    /*
+     * Match all request paths except for the ones starting with:
+     * - _next/static (static files)
+     * - _next/image (image optimization files)
+     * - favicon.ico (favicon file)
+     * - public folder
+     */
+    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
+  ],
 }

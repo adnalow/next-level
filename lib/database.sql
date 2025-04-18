@@ -3,6 +3,7 @@ DROP TRIGGER IF EXISTS on_auth_user_created ON auth.users;
 DROP FUNCTION IF EXISTS public.handle_new_user();
 DROP TABLE IF EXISTS jobs CASCADE;
 DROP TABLE IF EXISTS profiles CASCADE;
+DROP TABLE IF EXISTS applications CASCADE;
 DROP TYPE IF EXISTS user_role CASCADE;
 DROP TYPE IF EXISTS job_category CASCADE;
 
@@ -49,9 +50,23 @@ CREATE TABLE jobs (
   updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
+-- Create applications table
+CREATE TABLE applications (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  job_id UUID REFERENCES jobs(id) ON DELETE CASCADE NOT NULL,
+  applicant_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  message TEXT NOT NULL,
+  resume_url TEXT NOT NULL,
+  status TEXT NOT NULL DEFAULT 'pending',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  UNIQUE(job_id, applicant_id)
+);
+
 -- Enable RLS
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
+ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
 
 -- Allow public access to profiles (but limit what can be seen)
 CREATE POLICY "Public profiles are viewable by everyone"
@@ -92,6 +107,30 @@ CREATE POLICY "Job posters can update their own jobs"
   ON jobs FOR UPDATE
   USING (poster_id = auth.uid())
   WITH CHECK (poster_id = auth.uid());
+
+-- Add RLS policies for applications table
+CREATE POLICY "Job seekers can create applications"
+  ON applications FOR INSERT
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 
+      FROM profiles 
+      WHERE profiles.user_id = auth.uid() 
+      AND profiles.role = 'job_seeker'::user_role
+    )
+    AND auth.uid() = applicant_id
+  );
+
+CREATE POLICY "Users can view their own applications"
+  ON applications FOR SELECT
+  USING (
+    auth.uid() = applicant_id OR 
+    EXISTS (
+      SELECT 1 FROM jobs 
+      WHERE jobs.id = applications.job_id 
+      AND jobs.poster_id = auth.uid()
+    )
+  );
 
 -- Function to handle new user creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()
