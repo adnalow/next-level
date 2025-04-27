@@ -10,10 +10,13 @@ export async function POST(req: NextRequest) {
     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
     const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
     const result = await model.generateContent(geminiPrompt);
+    console.log('Gemini raw result:', JSON.stringify(result, null, 2));
     const text = result.response.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    // Remove markdown code block if present
+    const cleanedText = text.replace(/^```json\s*|```$/g, '').trim();
     let badgeJson;
     try {
-      badgeJson = JSON.parse(text);
+      badgeJson = JSON.parse(cleanedText);
     } catch (e) {
       return NextResponse.json({
         error: 'Failed to parse Gemini response',
