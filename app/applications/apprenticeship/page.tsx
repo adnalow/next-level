@@ -67,13 +67,13 @@ export default function ApprenticeshipPage() {
         setLoading(false)
         return
       }
-      // Get all in_progress applications for these jobs
+      // Get all in_progress applications for these jobs, including accepted_at
       const { data: apps, error: appsError } = await supabase
         .from('applications')
-        .select('id, job_id, applicant_id, status, created_at')
+        .select('id, job_id, applicant_id, status, created_at, accepted_at')
         .in('job_id', jobIds)
         .eq('status', 'in_progress')
-        .order('created_at', { ascending: false })
+        .order('accepted_at', { ascending: false })
       if (appsError) throw appsError
       const applicantIds = (apps || []).map((app: any) => app.applicant_id)
       // Fetch applicant emails
@@ -117,7 +117,7 @@ export default function ApprenticeshipPage() {
     setError(null)
     const { error } = await supabase
       .from('applications')
-      .update({ status: 'completed' })
+      .update({ status: 'completed', completed_at: new Date().toISOString() })
       .eq('id', applicationId)
     if (error) {
       setError('Error updating apprenticeship status')
@@ -150,7 +150,7 @@ export default function ApprenticeshipPage() {
                 <CardTitle className="line-clamp-2">{app.jobTitle}</CardTitle>
                 <div className="mt-2 flex flex-wrap gap-2">
                   <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs text-primary">{app.applicantEmail}</span>
-                  <span className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs">Accepted: {new Date(app.created_at).toLocaleString()}</span>
+                  <span className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs">Accepted: {app.accepted_at ? new Date(app.accepted_at).toLocaleString() : new Date(app.created_at).toLocaleString()}</span>
                   <span className="inline-flex items-center rounded-md bg-blue-100 text-blue-700 px-2 py-1 text-xs">in progress</span>
                 </div>
               </CardHeader>

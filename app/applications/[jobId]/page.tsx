@@ -113,19 +113,19 @@ export default function JobApplicationsPage() {
   }
 
   const updateApplicationStatus = async (applicationId: string, newStatus: Application['status']) => {
-    console.log('Button clicked:', { applicationId, newStatus, type: typeof applicationId }); // Debug log
     setUpdating(applicationId + newStatus)
     setError(null)
+    let updateObj: any = { status: newStatus }
+    if (newStatus === 'in_progress') {
+      updateObj.accepted_at = new Date().toISOString()
+    }
     const { data, error } = await supabase
       .from('applications')
-      .update({ status: newStatus })
+      .update(updateObj)
       .eq('id', applicationId)
-    console.log('Supabase update response:', { data, error }); // Log full response
     if (error) {
       setError('Error updating application status: ' + error.message)
-      console.error('Supabase error:', error)
     } else {
-      console.log('Status updated successfully, fetching applications...'); // Debug log
       await fetchJobAndApplications()
     }
     setUpdating(null)
