@@ -90,6 +90,7 @@ export default function JobApplicationsPage() {
         applicant: { email: profilesMap[app.applicant_id] || '' }
       }))
       setApplications(appsWithEmail)
+      console.log('Fetched applications:', appsWithEmail) // Debug log
     } catch (err: any) {
       console.error('Unexpected error:', err)
       setError('Error loading job or applications: ' + (err?.message || 'Unknown error'))
@@ -112,16 +113,19 @@ export default function JobApplicationsPage() {
   }
 
   const updateApplicationStatus = async (applicationId: string, newStatus: Application['status']) => {
+    console.log('Button clicked:', { applicationId, newStatus, type: typeof applicationId }); // Debug log
     setUpdating(applicationId + newStatus)
     setError(null)
-    const { error } = await supabase
+    const { data, error } = await supabase
       .from('applications')
       .update({ status: newStatus })
       .eq('id', applicationId)
+    console.log('Supabase update response:', { data, error }); // Log full response
     if (error) {
       setError('Error updating application status: ' + error.message)
       console.error('Supabase error:', error)
     } else {
+      console.log('Status updated successfully, fetching applications...'); // Debug log
       await fetchJobAndApplications()
     }
     setUpdating(null)
@@ -206,7 +210,7 @@ export default function JobApplicationsPage() {
                       size="sm"
                       className="flex-1"
                       disabled={updating === application.id + 'in_progress'}
-                      onClick={() => updateApplicationStatus(application.id, 'in_progress')}
+                      onClick={() => { console.log('Accept button onClick'); updateApplicationStatus(application.id, 'in_progress') }}
                     >
                       {updating === application.id + 'in_progress' ? 'Accepting...' : 'Accept'}
                     </Button>
@@ -215,7 +219,7 @@ export default function JobApplicationsPage() {
                       size="sm"
                       className="flex-1"
                       disabled={updating === application.id + 'declined'}
-                      onClick={() => updateApplicationStatus(application.id, 'declined')}
+                      onClick={() => { console.log('Decline button onClick'); updateApplicationStatus(application.id, 'declined') }}
                     >
                       {updating === application.id + 'declined' ? 'Declining...' : 'Decline'}
                     </Button>
