@@ -12,6 +12,8 @@ export function Navbar() {
   const [userRole, setUserRole] = useState<string | null>(null)
 
   useEffect(() => {
+    // Debug: Check if env variables are available
+    console.log('SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
     checkUserRole()
   }, [])
 

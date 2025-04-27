@@ -4,6 +4,10 @@ import type { NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
   const res = NextResponse.next()
+
+  // Debug: Log env variables in Edge Runtime
+  console.log('NEXT_PUBLIC_SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
+  console.log('NEXT_PUBLIC_SUPABASE_ANON_KEY:', process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY)
   const supabase = createMiddlewareClient({ req: request, res })
 
   const {
