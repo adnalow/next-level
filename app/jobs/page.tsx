@@ -37,8 +37,18 @@ type Job = {
   status: string
 }
 
+type Badge = {
+  id: string
+  job_id: string
+  title: string
+  description: string
+  svg: string
+  created_at: string
+}
+
 export default function JobsPage() {
   const [jobs, setJobs] = useState<Job[]>([])
+  const [badges, setBadges] = useState<{ [jobId: string]: Badge }>({})
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<JobCategory['value'] | 'all'>('all')
@@ -74,8 +84,25 @@ export default function JobsPage() {
 
     if (error) {
       console.error('Error fetching jobs:', error)
-    } else {
-      setJobs(data as Job[])
+      setJobs([])
+      setBadges({})
+      setLoading(false)
+      return
+    }
+    setJobs(data as Job[])
+
+    // Fetch badges for all jobs
+    const jobIds = (data as Job[]).map(j => j.id)
+    if (jobIds.length > 0) {
+      const { data: badgeData, error: badgeError } = await supabase
+        .from('badges')
+        .select('*')
+        .in('job_id', jobIds)
+      if (!badgeError && badgeData) {
+        const badgeMap: { [jobId: string]: Badge } = {}
+        badgeData.forEach((b: Badge) => { badgeMap[b.job_id] = b })
+        setBadges(badgeMap)
+      }
     }
     setLoading(false)
   }
@@ -137,8 +164,8 @@ export default function JobsPage() {
           {jobs.map((job) => (
             <Card key={job.id} className="flex flex-col">
               <CardHeader>
-                <div className="flex items-start justify-between">
-                  <div>
+                <div className="flex items-start justify-between w-full">
+                  <div className="flex-1 min-w-0">
                     <CardTitle className="line-clamp-2">{job.title}</CardTitle>
                     <div className="mt-2 flex flex-wrap gap-2">
                       <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs text-primary">
@@ -152,6 +179,13 @@ export default function JobsPage() {
                       </span>
                     </div>
                   </div>
+                  {/* Badge SVG on the right */}
+                  {badges[job.id]?.svg && (
+                    <div className="ml-4 flex-shrink-0 flex flex-col items-center justify-center" style={{ minWidth: 80 }}>
+                      <span dangerouslySetInnerHTML={{ __html: badges[job.id].svg }} style={{ width: 64, height: 64, display: 'inline-block' }} />
+                      <span className="mt-1 text-xs text-muted-foreground text-center max-w-[80px] truncate" title={badges[job.id].title}>{badges[job.id].title}</span>
+                    </div>
+                  )}
                 </div>
               </CardHeader>
               <CardContent className="flex-1">

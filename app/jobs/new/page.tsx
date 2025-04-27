@@ -7,6 +7,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -135,26 +136,28 @@ export default function CreateJobPage() {
       }
       const jobId = insertedJobs[0].id
 
-      // Gemini API call for badge generation
-      const geminiPrompt = `Generate a unique digital badge for the following job. Return a JSON object with: title (string), description (string), and svg (string, SVG code for the badge).\nJob Title: ${data.title}\nCategory: ${data.category}\nDescription: ${data.description}\nRequired Skills: ${skillTagsArray.join(', ')}\nLocation: ${data.location}`
+      // Call the server-side API route for badge generation
       let badgeTitle = ''
       let badgeDescription = ''
       let badgeSvg = ''
       try {
-        const geminiRes = await axios.post(
-          'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyCNi8Vv57tdcI2jWiXN5ndoe7le7xluSw0',
-          {
-            contents: [{ parts: [{ text: geminiPrompt }] }]
-          }
-        )
-        // Parse Gemini response
-        const text = geminiRes.data.candidates?.[0]?.content?.parts?.[0]?.text || ''
-        const badgeJson = JSON.parse(text)
-        badgeTitle = badgeJson.title || 'Badge'
-        badgeDescription = badgeJson.description || 'Badge for job completion.'
-        badgeSvg = badgeJson.svg || ''
+        const badgeRes = await fetch('/api/generate-badge', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            title: data.title,
+            category: data.category,
+            description: data.description,
+            skillTagsArray,
+            location: data.location
+          })
+        })
+        const badgeData = await badgeRes.json()
+        badgeTitle = badgeData.title || 'Badge'
+        badgeDescription = badgeData.description || 'Badge for job completion.'
+        badgeSvg = badgeData.svg || ''
       } catch (err) {
-        badgeTitle = `${data.title} `
+        badgeTitle = `Achievement: ${data.title}`
         badgeDescription = `Badge for completing the job: ${data.title}`
         badgeSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="40" fill="#4F46E5" /><text x="50%" y="54%" text-anchor="middle" fill="#fff" font-size="16" font-family="Arial" dy=".3em">Badge</text></svg>'
       }
