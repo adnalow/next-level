@@ -231,14 +231,6 @@ export default function JobApplicationsPage() {
                       variant="outline"
                       size="sm"
                       className="flex-1"
-                      onClick={() => updateApplicationStatus(application.id, 'completed')}
-                    >
-                      Complete
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
                       onClick={() => updateApplicationStatus(application.id, 'declined')}
                     >
                       Decline
