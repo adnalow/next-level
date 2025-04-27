@@ -6,6 +6,7 @@ import * as z from 'zod'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import axios from 'axios'
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -122,15 +123,53 @@ export default function CreateJobPage() {
         poster_id: session.user.id,
       }
 
-      console.log('Submitting job data:', jobData)
-
-      const { error: jobError } = await supabase
+      // Insert job and get the new job's ID
+      const { data: insertedJobs, error: jobError } = await supabase
         .from('jobs')
         .insert(jobData)
+        .select('id')
 
-      if (jobError) {
-        console.error('Job creation error:', jobError)
-        setError('Error creating job: ' + jobError.message)
+      if (jobError || !insertedJobs || insertedJobs.length === 0) {
+        setError('Error creating job: ' + (jobError?.message || 'Unknown error'))
+        return
+      }
+      const jobId = insertedJobs[0].id
+
+      // Gemini API call for badge generation
+      const geminiPrompt = `Generate a unique digital badge for the following job. Return a JSON object with: title (string), description (string), and svg (string, SVG code for the badge).\nJob Title: ${data.title}\nCategory: ${data.category}\nDescription: ${data.description}\nRequired Skills: ${skillTagsArray.join(', ')}\nLocation: ${data.location}`
+      let badgeTitle = ''
+      let badgeDescription = ''
+      let badgeSvg = ''
+      try {
+        const geminiRes = await axios.post(
+          'https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=AIzaSyCNi8Vv57tdcI2jWiXN5ndoe7le7xluSw0',
+          {
+            contents: [{ parts: [{ text: geminiPrompt }] }]
+          }
+        )
+        // Parse Gemini response
+        const text = geminiRes.data.candidates?.[0]?.content?.parts?.[0]?.text || ''
+        const badgeJson = JSON.parse(text)
+        badgeTitle = badgeJson.title || 'Badge'
+        badgeDescription = badgeJson.description || 'Badge for job completion.'
+        badgeSvg = badgeJson.svg || ''
+      } catch (err) {
+        badgeTitle = `${data.title} `
+        badgeDescription = `Badge for completing the job: ${data.title}`
+        badgeSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><circle cx="50" cy="50" r="40" fill="#4F46E5" /><text x="50%" y="54%" text-anchor="middle" fill="#fff" font-size="16" font-family="Arial" dy=".3em">Badge</text></svg>'
+      }
+
+      // Insert badge into badges table
+      const { error: badgeError } = await supabase
+        .from('badges')
+        .insert({
+          job_id: jobId,
+          title: badgeTitle,
+          description: badgeDescription,
+          svg: badgeSvg
+        })
+      if (badgeError) {
+        setError('Job created, but error saving badge: ' + badgeError.message)
         return
       }
 

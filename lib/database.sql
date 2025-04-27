@@ -65,10 +65,34 @@ CREATE TABLE applications (
   UNIQUE(job_id, applicant_id)
 );
 
+-- Create badges table
+CREATE TABLE badges (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  job_id UUID REFERENCES jobs(id) ON DELETE CASCADE NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT NOT NULL,
+  svg TEXT NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
+);
+
+-- Create user_badges table
+CREATE TABLE user_badges (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE NOT NULL,
+  badge_id UUID REFERENCES badges(id) ON DELETE CASCADE NOT NULL,
+  acquisition_number INTEGER NOT NULL,
+  acquired_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL,
+  UNIQUE(user_id, badge_id)
+);
+
 -- Enable RLS
 ALTER TABLE profiles ENABLE ROW LEVEL SECURITY;
 ALTER TABLE jobs ENABLE ROW LEVEL SECURITY;
 ALTER TABLE applications ENABLE ROW LEVEL SECURITY;
+
+-- Enable RLS for badges and user_badges
+ALTER TABLE badges ENABLE ROW LEVEL SECURITY;
+ALTER TABLE user_badges ENABLE ROW LEVEL SECURITY;
 
 -- Allow public access to profiles (but limit what can be seen)
 CREATE POLICY "Public profiles are viewable by everyone"
@@ -133,6 +157,37 @@ CREATE POLICY "Users can view their own applications"
       AND jobs.poster_id = auth.uid()
     )
   );
+
+-- Anyone can view badges
+CREATE POLICY "Anyone can view badges"
+  ON badges FOR SELECT
+  USING (true);
+
+-- Allow job posters to insert badges for their jobs
+CREATE POLICY "Job posters can insert badges for their jobs"
+  ON badges FOR INSERT
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM jobs
+      WHERE jobs.id = badges.job_id
+      AND jobs.poster_id = auth.uid()
+    )
+  );
+
+-- Users can view their own user_badges
+CREATE POLICY "Users can view their own user_badges"
+  ON user_badges FOR SELECT
+  USING (auth.uid() = user_id);
+
+-- Users can insert their own user_badges
+CREATE POLICY "Users can insert their own user_badges"
+  ON user_badges FOR INSERT
+  WITH CHECK (auth.uid() = user_id);
+
+-- Users can delete their own user_badges
+CREATE POLICY "Users can delete their own user_badges"
+  ON user_badges FOR DELETE
+  USING (auth.uid() = user_id);
 
 -- Function to handle new user creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()
