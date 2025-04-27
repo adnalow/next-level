@@ -53,6 +53,11 @@ export function Navbar() {
           <Link href="/applications" className="text-sm font-medium transition-colors hover:text-primary">
             Applications
           </Link>
+          {userRole === 'job_poster' && (
+            <Link href="/applications/apprenticeship" className="text-sm font-medium transition-colors hover:text-primary">
+              Apprenticeship
+            </Link>
+          )}
         </div>
         <div className="ml-auto flex items-center space-x-4">
           <Button onClick={handleSignOut} variant="outline">

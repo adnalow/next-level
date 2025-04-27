@@ -141,12 +141,36 @@ export default function ApplicationsPage() {
     setLoading(false)
   }
 
-  const updateApplicationStatus = async (applicationId: string, newStatus: Application['status']) => {
+  // Enhanced: Accepting an applicant closes the job and declines others
+  const updateApplicationStatus = async (applicationId: string, newStatus: Application['status'], jobId?: string) => {
+    setError(null)
+    if (newStatus === 'in_progress' && jobId) {
+      // Accept this application, decline others, and close the job
+      const { error: acceptError } = await supabase
+        .from('applications')
+        .update({ status: 'in_progress' })
+        .eq('id', applicationId)
+      const { error: declineError } = await supabase
+        .from('applications')
+        .update({ status: 'declined' })
+        .neq('id', applicationId)
+        .eq('job_id', jobId)
+      const { error: closeJobError } = await supabase
+        .from('jobs')
+        .update({ status: 'closed' })
+        .eq('id', jobId)
+      if (acceptError || declineError || closeJobError) {
+        setError('Error updating application/job status')
+      } else {
+        fetchApplications()
+      }
+      return
+    }
+    // Default: just update the application status
     const { error } = await supabase
       .from('applications')
       .update({ status: newStatus })
       .eq('id', applicationId)
-
     if (error) {
       setError('Error updating application status')
     } else {
@@ -276,9 +300,9 @@ export default function ApplicationsPage() {
                         variant="outline"
                         size="sm"
                         className="flex-1"
-                        onClick={() => updateApplicationStatus(application.id, 'in_progress')}
+                        onClick={() => updateApplicationStatus(application.id, 'in_progress', application.job_id)}
                       >
-                        Start Review
+                        Accept
                       </Button>
                       <Button
                         variant="outline"
