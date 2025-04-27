@@ -24,8 +24,18 @@ type Application = {
   }
 }
 
+type Job = {
+  id: string
+  title: string
+  category: string
+  location: string
+  status: string
+  created_at: string
+}
+
 export default function ApplicationsPage() {
   const [applications, setApplications] = useState<Application[]>([])
+  const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [userRole, setUserRole] = useState<string | null>(null)
@@ -38,7 +48,11 @@ export default function ApplicationsPage() {
 
   useEffect(() => {
     if (userRole) {
-      fetchApplications()
+      if (userRole === 'job_poster') {
+        fetchJobs()
+      } else {
+        fetchApplications()
+      }
     }
   }, [userRole])
 
@@ -66,33 +80,63 @@ export default function ApplicationsPage() {
     if (!session) return
 
     try {
-      let { data, error } = userRole === 'job_seeker' 
-        ? await supabase
-            .from('applications')
-            .select(`
-              *,
-              job:jobs(title, category, location)
-            `)
-            .eq('applicant_id', session.user.id)
-            .order('created_at', { ascending: false })
-        : await supabase
-            .from('applications')
-            .select(`
-              *,
-              job:jobs(title, category, location),
-              applicant:profiles!applications_applicant_id_fkey(email)
-            `)
-            .eq('jobs.poster_id', session.user.id)
-            .order('created_at', { ascending: false })
-
+      let data, error
+      if (userRole === 'job_seeker') {
+        ({ data, error } = await supabase
+          .from('applications')
+          .select(`*, job:jobs(title, category, location)`)
+          .eq('applicant_id', session.user.id)
+          .order('created_at', { ascending: false })
+        )
+      } else {
+        // Fetch job IDs posted by this user
+        const { data: jobs, error: jobsError } = await supabase
+          .from('jobs')
+          .select('id')
+          .eq('poster_id', session.user.id)
+        if (jobsError) throw jobsError
+        const jobIds = jobs?.map(j => j.id) || []
+        if (jobIds.length === 0) {
+          setApplications([])
+          setLoading(false)
+          return
+        }
+        ({ data, error } = await supabase
+          .from('applications')
+          .select(`*, job:jobs(title, category, location), applicant:profiles!applications_applicant_id_fkey(email)`)
+          .in('job_id', jobIds)
+          .order('created_at', { ascending: false })
+        )
+      }
       if (error) {
         setError('Error loading applications')
       } else {
-        setApplications(data || []) // Handle null case by providing empty array as fallback
+        setApplications(data || [])
       }
     } catch (err) {
       console.error('Error fetching applications:', err)
       setError('Error loading applications')
+    }
+    setLoading(false)
+  }
+
+  const fetchJobs = async () => {
+    setLoading(true)
+    const { data: { session } } = await supabase.auth.getSession()
+    if (!session) return
+    try {
+      const { data, error } = await supabase
+        .from('jobs')
+        .select('*')
+        .eq('poster_id', session.user.id)
+        .order('created_at', { ascending: false })
+      if (error) {
+        setError('Error loading jobs')
+      } else {
+        setJobs(data || [])
+      }
+    } catch (err) {
+      setError('Error loading jobs')
     }
     setLoading(false)
   }
@@ -122,7 +166,7 @@ export default function ApplicationsPage() {
     <div className="container mx-auto py-10 space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">
-          {userRole === 'job_seeker' ? 'My Applications' : 'Manage Applications'}
+          {userRole === 'job_seeker' ? 'My Applications' : 'My Posted Jobs'}
         </h1>
       </div>
 
@@ -132,101 +176,145 @@ export default function ApplicationsPage() {
         </div>
       )}
 
-      {applications.length === 0 ? (
-        <Card>
-          <CardContent className="flex items-center justify-center py-10">
-            <p className="text-muted-foreground">No applications found</p>
-          </CardContent>
-        </Card>
-      ) : (
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {applications.map((application) => (
-            <Card key={application.id}>
-              <CardHeader>
-                <CardTitle className="line-clamp-2">{application.job.title}</CardTitle>
-                <div className="mt-2 flex flex-wrap gap-2">
-                  <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs text-primary">
-                    {application.job.category}
-                  </span>
-                  <span className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs">
-                    {application.job.location}
-                  </span>
-                  <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs ${
-                    application.status === 'completed' ? 'bg-green-100 text-green-700' :
-                    application.status === 'declined' ? 'bg-red-100 text-red-700' :
-                    application.status === 'in_progress' ? 'bg-blue-100 text-blue-700' :
-                    'bg-gray-100 text-gray-700'
-                  }`}>
-                    {application.status.replace('_', ' ')}
-                  </span>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {userRole === 'job_poster' && (
-                  <div>
-                    <p className="text-sm font-medium">Applicant</p>
-                    <p className="text-sm text-muted-foreground">{application.applicant.email}</p>
+      {userRole === 'job_poster' ? (
+        jobs.length === 0 ? (
+          <Card>
+            <CardContent className="flex items-center justify-center py-10">
+              <p className="text-muted-foreground">No jobs found</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {jobs.map((job) => (
+              <Card key={job.id}>
+                <CardHeader>
+                  <CardTitle className="line-clamp-2">{job.title}</CardTitle>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs text-primary">
+                      {job.category}
+                    </span>
+                    <span className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs">
+                      {job.location}
+                    </span>
+                    <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs ${
+                      job.status === 'open' ? 'bg-green-100 text-green-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {job.status}
+                    </span>
                   </div>
-                )}
-                <div>
-                  <p className="text-sm font-medium">Cover Letter</p>
-                  <p className="text-sm text-muted-foreground">{application.message}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium">Resume</p>
-                  <a
-                    href={application.resume_url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-sm text-primary hover:underline"
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full"
+                    onClick={() => router.push(`/applications/${job.id}`)}
                   >
-                    View Resume
-                  </a>
-                </div>
-                {userRole === 'job_poster' && application.status === 'applied' && (
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => updateApplicationStatus(application.id, 'in_progress')}
-                    >
-                      Start Review
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => updateApplicationStatus(application.id, 'declined')}
-                    >
-                      Decline
-                    </Button>
+                    View Details
+                  </Button>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )
+      ) : (
+        applications.length === 0 ? (
+          <Card>
+            <CardContent className="flex items-center justify-center py-10">
+              <p className="text-muted-foreground">No applications found</p>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {applications.map((application) => (
+              <Card key={application.id}>
+                <CardHeader>
+                  <CardTitle className="line-clamp-2">{application.job.title}</CardTitle>
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs text-primary">
+                      {application.job.category}
+                    </span>
+                    <span className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs">
+                      {application.job.location}
+                    </span>
+                    <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs ${
+                      application.status === 'completed' ? 'bg-green-100 text-green-700' :
+                      application.status === 'declined' ? 'bg-red-100 text-red-700' :
+                      application.status === 'in_progress' ? 'bg-blue-100 text-blue-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {application.status.replace('_', ' ')}
+                    </span>
                   </div>
-                )}
-                {userRole === 'job_poster' && application.status === 'in_progress' && (
-                  <div className="flex gap-2">
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => updateApplicationStatus(application.id, 'completed')}
-                    >
-                      Complete
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="flex-1"
-                      onClick={() => updateApplicationStatus(application.id, 'declined')}
-                    >
-                      Decline
-                    </Button>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {userRole === 'job_poster' && (
+                    <div>
+                      <p className="text-sm font-medium">Applicant</p>
+                      <p className="text-sm text-muted-foreground">{application.applicant.email}</p>
+                    </div>
+                  )}
+                  <div>
+                    <p className="text-sm font-medium">Cover Letter</p>
+                    <p className="text-sm text-muted-foreground">{application.message}</p>
                   </div>
-                )}
-              </CardContent>
-            </Card>
-          ))}
-        </div>
+                  <div>
+                    <p className="text-sm font-medium">Resume</p>
+                    <a
+                      href={application.resume_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-sm text-primary hover:underline"
+                    >
+                      View Resume
+                    </a>
+                  </div>
+                  {userRole === 'job_poster' && application.status === 'applied' && (
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => updateApplicationStatus(application.id, 'in_progress')}
+                      >
+                        Start Review
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => updateApplicationStatus(application.id, 'declined')}
+                      >
+                        Decline
+                      </Button>
+                    </div>
+                  )}
+                  {userRole === 'job_poster' && application.status === 'in_progress' && (
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => updateApplicationStatus(application.id, 'completed')}
+                      >
+                        Complete
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="flex-1"
+                        onClick={() => updateApplicationStatus(application.id, 'declined')}
+                      >
+                        Decline
+                      </Button>
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )
       )}
     </div>
   )
