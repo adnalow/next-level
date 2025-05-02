@@ -75,6 +75,10 @@ CREATE TABLE badges (
   created_at TIMESTAMP WITH TIME ZONE DEFAULT TIMEZONE('utc'::text, NOW()) NOT NULL
 );
 
+-- Add category and location columns to badges table
+ALTER TABLE badges ADD COLUMN IF NOT EXISTS category TEXT;
+ALTER TABLE badges ADD COLUMN IF NOT EXISTS location TEXT;
+
 -- Create user_badges table
 CREATE TABLE user_badges (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
