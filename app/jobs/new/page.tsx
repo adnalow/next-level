@@ -169,7 +169,9 @@ export default function CreateJobPage() {
           job_id: jobId,
           title: badgeTitle,
           description: badgeDescription,
-          svg: badgeSvg
+          svg: badgeSvg,
+          category: data.category, // include category
+          location: data.location  // include location
         })
       if (badgeError) {
         setError('Job created, but error saving badge: ' + badgeError.message)
