@@ -189,6 +189,31 @@ CREATE POLICY "Users can delete their own user_badges"
   ON user_badges FOR DELETE
   USING (auth.uid() = user_id);
 
+-- Allow job posters to assign badges to users
+CREATE POLICY "Job posters can assign badges to users"
+  ON user_badges FOR INSERT
+  WITH CHECK (
+    EXISTS (
+      SELECT 1 FROM jobs
+      WHERE jobs.id = (
+        SELECT job_id FROM badges WHERE badges.id = user_badges.badge_id
+      )
+      AND jobs.poster_id = auth.uid()
+    )
+  );
+
+-- Allow job posters to view user_badges for their jobs' badges
+CREATE POLICY "Job posters can view user_badges for their jobs"
+  ON user_badges FOR SELECT
+  USING (
+    EXISTS (
+      SELECT 1 FROM badges
+      JOIN jobs ON jobs.id = badges.job_id
+      WHERE badges.id = user_badges.badge_id
+      AND jobs.poster_id = auth.uid()
+    )
+  );
+
 -- Function to handle new user creation
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER

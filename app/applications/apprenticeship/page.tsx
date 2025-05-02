@@ -100,6 +100,22 @@ export default function ApprenticeshipPage() {
     setLoading(false)
   }
 
+  // Helper function to get the next acquisition number for a badge
+  const getNextAcquisitionNumber = async (badgeId: string) => {
+    const { count, error } = await supabase
+      .from('user_badges')
+      .select('id', { count: 'exact', head: true })
+      .eq('badge_id', badgeId)
+    if (error) {
+      console.error('Error counting badge acquisitions:', error)
+      return 1
+    }
+    const nextAcquisitionNumber = (count || 0) + 1
+    console.log(`Current count for badge ${badgeId}:`, count)
+    console.log(`Next acquisition number:`, nextAcquisitionNumber)
+    return nextAcquisitionNumber
+  }
+
   const markJobCompleted = async (jobId: string) => {
     setError(null)
     const { error } = await supabase
@@ -115,15 +131,51 @@ export default function ApprenticeshipPage() {
 
   const markApprenticeCompleted = async (applicationId: string) => {
     setError(null)
-    const { error } = await supabase
+    // Fetch the application to get job_id and applicant_id
+    const { data: appData, error: appFetchError } = await supabase
+      .from('applications')
+      .select('job_id, applicant_id')
+      .eq('id', applicationId)
+      .single()
+    if (appFetchError || !appData) {
+      setError('Error fetching application details')
+      return
+    }
+    // Update application status to completed
+    const { error: updateError } = await supabase
       .from('applications')
       .update({ status: 'completed', completed_at: new Date().toISOString() })
       .eq('id', applicationId)
-    if (error) {
+    if (updateError) {
       setError('Error updating apprenticeship status')
-    } else {
-      fetchApprentices()
+      return
     }
+    // Fetch the badge for the job
+    const { data: badge, error: badgeError } = await supabase
+      .from('badges')
+      .select('id')
+      .eq('job_id', appData.job_id)
+      .single()
+    if (badgeError || !badge) {
+      setError('Error fetching badge for job')
+      return
+    }
+    // Get the next acquisition number using the helper
+    const nextAcquisitionNumber = await getNextAcquisitionNumber(badge.id)
+    // Insert into user_badges
+    const { error: insertError } = await supabase
+      .from('user_badges')
+      .insert({
+        user_id: appData.applicant_id,
+        badge_id: badge.id,
+        acquisition_number: nextAcquisitionNumber,
+        acquired_at: new Date().toISOString(),
+      })
+    if (insertError) {
+      setError('Error assigning badge to user')
+      return
+    }
+    fetchApprentices()
   }
 
   if (loading) {
