@@ -189,19 +189,27 @@ export default function CreateJobPage() {
 
   if (isLoading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">Loading...</div>
+      <div className="flex min-h-screen items-center justify-center bg-black">
+        <div className="text-center text-white">Loading...</div>
       </div>
     )
   }
 
   return (
-    <div className="container mx-auto py-10">
-      <Card>
-        <CardHeader>
-          <CardTitle>Post a New Job</CardTitle>
-        </CardHeader>
-        <CardContent>
+    <div className="min-h-screen bg-[#111010] flex flex-col items-center py-0">
+      {/* Orange top border */}
+      <div className="w-full h-[2px] bg-[#ff8800] mb-4" />
+      {/* Title and icon left-aligned */}
+      <div className="w-full max-w-4xl flex items-center px-6 mb-6">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="mr-2" xmlns="http://www.w3.org/2000/svg">
+          <rect x="3" y="7" width="18" height="13" rx="2" fill="none" stroke="#ff8800" strokeWidth="2"/>
+          <path d="M16 7V5a4 4 0 0 0-8 0v2" stroke="#ff8800" strokeWidth="2" fill="none"/>
+        </svg>
+        <h1 className="text-3xl font-normal text-[#ff8800] uppercase tracking-wide">Post a New Job</h1>
+      </div>
+      {/* Card */}
+      <div className="w-full max-w-4xl px-6">
+        <div className="w-full bg-[#232323] p-8" style={{boxShadow: 'none', borderRadius: 0}}>
           {error && (
             <div className="mb-4 rounded-md bg-red-50 p-4 text-red-500">
               {error}
@@ -214,9 +222,9 @@ export default function CreateJobPage() {
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Job Title</FormLabel>
+                    <FormLabel className="uppercase text-white font-bold tracking-wide">JOB TITLE</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., Logo Design Project" {...field} />
+                      <Input className="bg-black text-white border-none placeholder-gray-300 focus:ring-0 focus:border-none" placeholder="e.g., Logo Design Project" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -228,16 +236,16 @@ export default function CreateJobPage() {
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Category</FormLabel>
+                    <FormLabel className="uppercase text-white font-bold tracking-wide">CATEGORY</FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger>
+                        <SelectTrigger className="bg-black text-white border-none focus:ring-0 focus:border-none">
                           <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent>
+                      <SelectContent className="bg-[#262626] text-white border-none">
                         {jobCategories.map((category) => (
-                          <SelectItem key={category.value} value={category.value}>
+                          <SelectItem key={category.value} value={category.value} className="hover:bg-black focus:bg-black">
                             {category.label}
                           </SelectItem>
                         ))}
@@ -253,9 +261,10 @@ export default function CreateJobPage() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel className="uppercase text-white font-bold tracking-wide">DESCRIPTION</FormLabel>
                     <FormControl>
                       <Textarea 
+                        className="bg-black text-white border-none placeholder-gray-300 focus:ring-0 focus:border-none min-h-[120px]"
                         placeholder="Describe the job requirements and expectations..." 
                         {...field} 
                       />
@@ -270,14 +279,15 @@ export default function CreateJobPage() {
                 name="skillTags"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Required Skills</FormLabel>
+                    <FormLabel className="uppercase text-white font-bold tracking-wide">REQUIRED SKILLS</FormLabel>
                     <FormControl>
                       <Input 
+                        className="bg-black text-white border-none placeholder-gray-300 focus:ring-0 focus:border-none" 
                         placeholder="e.g., Photoshop, Illustrator (comma-separated)" 
                         {...field} 
                       />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="text-gray-400">
                       Enter skills separated by commas
                     </FormDescription>
                     <FormMessage />
@@ -290,9 +300,9 @@ export default function CreateJobPage() {
                 name="location"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Location</FormLabel>
+                    <FormLabel className="uppercase text-white font-bold tracking-wide">LOCATION</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., Manila, Philippines" {...field} />
+                      <Input className="bg-black text-white border-none placeholder-gray-300 focus:ring-0 focus:border-none" placeholder="e.g., Manila, Philippines" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -304,17 +314,18 @@ export default function CreateJobPage() {
                 name="durationDays"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Duration (days)</FormLabel>
+                    <FormLabel className="uppercase text-white font-bold tracking-wide">DURATION (DAYS)</FormLabel>
                     <FormControl>
                       <Input 
                         type="number" 
                         min={1} 
                         max={7} 
+                        className="bg-black text-white border-none focus:ring-0 focus:border-none" 
                         value={field.value.toString()}
                         onChange={(e) => field.onChange(e.target.valueAsNumber)}
                       />
                     </FormControl>
-                    <FormDescription>
+                    <FormDescription className="text-gray-400">
                       Maximum duration is 7 days
                     </FormDescription>
                     <FormMessage />
@@ -322,13 +333,13 @@ export default function CreateJobPage() {
                 )}
               />
 
-              <Button type="submit" disabled={isLoading}>
-                {isLoading ? 'Creating...' : 'Post Job'}
+              <Button type="submit" disabled={isLoading} className="w-full bg-[#ff8800] text-black font-normal py-3 rounded-none hover:bg-[#ff8800] transition-colors uppercase tracking-wide text-lg">
+                {isLoading ? 'Creating...' : 'POST JOB'}
               </Button>
             </form>
           </Form>
-        </CardContent>
-      </Card>
+        </div>
+      </div>
     </div>
   )
 }
