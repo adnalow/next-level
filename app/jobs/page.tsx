@@ -10,23 +10,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMapMarkerAlt, faClock, faTag, faBriefcase, faSearch, faFilter } from '@fortawesome/free-solid-svg-icons'
 import ClientLayout from '../components/ClientLayout'
+import { jobCategories } from "@/lib/constants"
 
 type JobCategory = {
   value: 'digital_design' | 'programming' | 'writing' | 'marketing' | 'manual_labor' | 'tutoring' | 'gardening' | 'carpentry' | 'other'
   label: string
 }
-
-export const jobCategories: JobCategory[] = [
-  { value: 'digital_design', label: 'Digital Design' },
-  { value: 'programming', label: 'Programming' },
-  { value: 'writing', label: 'Writing' },
-  { value: 'marketing', label: 'Marketing' },
-  { value: 'manual_labor', label: 'Manual Labor' },
-  { value: 'tutoring', label: 'Tutoring' },
-  { value: 'gardening', label: 'Gardening' },
-  { value: 'carpentry', label: 'Carpentry' },
-  { value: 'other', label: 'Other' },
-]
 
 type Job = {
   id: string
