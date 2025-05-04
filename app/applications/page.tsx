@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useSessionContext } from '@/lib/SessionContext'
+import { MapPin, Clock } from 'lucide-react'
 
 type Application = {
   id: string
@@ -171,7 +172,9 @@ export default function ApplicationsPage() {
   return (
     <div className="min-h-screen bg-black px-4 py-10">
       <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-[#ff8000] mb-10 tracking-wide uppercase" style={{letterSpacing: '2px'}}>MY POSTED JOBS</h1>
+        <h1 className="text-4xl font-bold text-[#ff8000] mb-10 tracking-wide uppercase" style={{letterSpacing: '2px'}}>
+          {userRole === 'job_seeker' ? 'MY APPLICATIONS' : 'MY POSTED JOBS'}
+        </h1>
         {error && (
           <div className="rounded-md bg-red-900/40 p-3 text-sm text-red-400 mb-6">
             {error}
@@ -218,8 +221,65 @@ export default function ApplicationsPage() {
               </CardContent>
             </Card>
           ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {applications.map((application) => (
+            userRole === 'job_seeker' ? (
+              <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-2">
+                {applications.map((application) => (
+                  <div
+                    key={application.id}
+                    className="bg-[#232323] rounded shadow-lg flex flex-col min-h-[340px] border border-[#222]"
+                  >
+                    <div className="p-8 pb-4 flex-1 flex flex-col">
+                      <div className="text-xl md:text-2xl font-bold text-white leading-tight mb-4 uppercase tracking-wide" style={{letterSpacing: '1px'}}>
+                        {application.job.title}
+                      </div>
+                      <div className="flex flex-wrap gap-2 mb-6">
+                        <span className="inline-flex items-center rounded bg-[#444] px-3 py-1 text-xs font-bold text-white uppercase tracking-wide">{application.job.category}</span>
+                        <span className="inline-flex items-center rounded bg-[#444] px-3 py-1 text-xs font-bold text-white uppercase tracking-wide">{application.job.location}</span>
+                        <span className={`inline-flex items-center rounded px-3 py-1 text-xs font-bold uppercase tracking-wide ${
+                          application.status === 'completed' ? 'bg-[#22c55e] text-white' :
+                          application.status === 'declined' ? 'bg-red-600 text-white' :
+                          application.status === 'in_progress' ? 'bg-blue-600 text-white' :
+                          'bg-[#444] text-white'
+                        }`}>
+                          {application.status.replace('_', ' ').toUpperCase()}
+                        </span>
+                      </div>
+                      <div className="mb-3">
+                        <div className="text-[#ff8000] text-sm font-bold mb-1 uppercase tracking-wide">Cover Letter</div>
+                        <div className="bg-[#181818] text-white text-sm rounded px-4 py-3 min-h-[56px]">{application.message}</div>
+                      </div>
+                      <div className="mb-3">
+                        <div className="text-[#ff8000] text-sm font-bold mb-1 uppercase tracking-wide">Resume</div>
+                        <a
+                          href={application.resume_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="flex items-center gap-2 bg-black text-white font-bold px-4 py-3 rounded-none w-full justify-center text-base border border-[#222] hover:bg-[#181818] transition-colors duration-150"
+                        >
+                          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 mr-2">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-6h6v6m2 4H7a2 2 0 01-2-2V7a2 2 0 012-2h3.5a1 1 0 01.7.3l5.5 5.5a1 1 0 01.3.7V19a2 2 0 01-2 2z" />
+                          </svg>
+                          VIEW RESUME
+                        </a>
+                      </div>
+                    </div>
+                    <div className="bg-[#2d2d2d] px-8 py-4 flex items-center justify-between rounded-b">
+                      <div className="flex items-center gap-4 text-[#ff8000] text-sm font-medium">
+                        <span className="flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          Remote
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-4 h-4" />
+                          Applied: {new Date(application.created_at).toLocaleDateString()}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              applications.map((application) => (
                 <Card key={application.id}>
                   <CardHeader>
                     <CardTitle className="line-clamp-2">{application.job.title}</CardTitle>
@@ -304,8 +364,8 @@ export default function ApplicationsPage() {
                     )}
                   </CardContent>
                 </Card>
-              ))}
-            </div>
+              ))
+            )
           )
         )}
       </div>
