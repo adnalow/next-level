@@ -15,6 +15,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { jobCategories } from '../page'
+import { Building2, Globe, CalendarDays, Tag, Mail, Clock } from 'lucide-react'
 
 type Job = {
   id: string
@@ -149,8 +150,8 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center">
-        <div className="text-center">Loading...</div>
+      <div className="flex min-h-screen items-center justify-center bg-[#222]">
+        <div className="text-center text-white">Loading...</div>
       </div>
     )
   }
@@ -158,7 +159,7 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
   if (!job) {
     return (
       <div className="container mx-auto py-10">
-        <Card>
+        <Card className="bg-[#222] border border-orange-500">
           <CardContent className="flex items-center justify-center py-10">
             <p className="text-muted-foreground">Job not found</p>
           </CardContent>
@@ -168,97 +169,117 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
   }
 
   return (
-    <div className="container mx-auto py-10 space-y-6">
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">{job.title}</CardTitle>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs text-primary">
-              {jobCategories.find(c => c.value === job.category)?.label || job.category}
-            </span>
-            <span className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs">
-              {job.location}
-            </span>
-            <span className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs">
-              {job.duration_days} {job.duration_days === 1 ? 'day' : 'days'}
-            </span>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div>
-            <h3 className="text-lg font-semibold">Description</h3>
-            <p className="mt-2 text-muted-foreground">{job.description}</p>
-          </div>
-
-          <div>
-            <h3 className="text-lg font-semibold">Required Skills</h3>
-            <div className="mt-2 flex flex-wrap gap-1">
-              {job.skill_tags.map((tag, index) => (
-                <span
-                  key={index}
-                  className="inline-flex items-center rounded-md bg-secondary/50 px-2 py-1 text-xs"
-                >
-                  {tag}
+    <div className="min-h-screen bg-[#222] flex justify-center px-2">
+      <div className="w-full max-w-4xl mx-auto py-10">
+        <div className="bg-[#222] rounded-lg shadow border border-[#333]">
+          <div className="px-8 pt-8 pb-4 border-b border-orange-500">
+            <div className="flex items-center justify-between">
+              <h1 className="text-3xl font-bold text-orange-500 tracking-wide">
+                {job.title}
+              </h1>
+              <div className="flex flex-col items-end">
+                <span className="text-xs text-white/70">Posted on</span>
+                <span className="text-sm font-semibold text-white border border-orange-500 rounded px-2 py-1 mt-1 whitespace-nowrap">
+                  {new Date(job.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                 </span>
-              ))}
+              </div>
+            </div>
+            <div className="flex flex-wrap gap-3 mt-4">
+              <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
+                <Building2 className="w-4 h-4 text-orange-500" />
+                E-Shop Solutions Inc.
+              </span>
+              <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
+                <Globe className="w-4 h-4 text-orange-500" />
+                Remote
+              </span>
+              <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
+                <Clock className="w-4 h-4 text-orange-500" />
+                {job.duration_days} {job.duration_days === 1 ? 'day' : 'days'}
+              </span>
             </div>
           </div>
 
-          {userRole === 'job_seeker' && (
-            <>
-              <div className="border-t pt-6">
-                <h3 className="text-lg font-semibold mb-4">Apply for this Job</h3>
-                {error && (
-                  <div className="mb-4 rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-                    {error}
-                  </div>
-                )}
+          <div className="px-8 py-6 space-y-8">
+            <section>
+              <h2 className="text-lg font-semibold text-orange-500 mb-2 border-l-4 border-orange-500 pl-2">Description</h2>
+              <p className="text-white/90 text-base leading-relaxed">{job.description}</p>
+            </section>
+
+            <section>
+              <h2 className="text-lg font-semibold text-orange-500 mb-2 border-l-4 border-orange-500 pl-2">Skills</h2>
+              <div className="flex flex-wrap gap-2 mt-2">
+                {job.skill_tags.map((tag, idx) => (
+                  <span key={idx} className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
+                    <Tag className="w-4 h-4 text-orange-500" />
+                    {tag}
+                  </span>
+                ))}
+              </div>
+            </section>
+
+            {userRole === 'job_seeker' && (
+              <section className="bg-[#181818] border border-orange-500 rounded-lg px-6 py-8 mt-8">
+                <h2 className="text-xl font-bold text-orange-500 mb-6">APPLY FOR THIS JOB</h2>
                 <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                    <FormField
-                      control={form.control}
-                      name="message"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Cover Letter</FormLabel>
-                          <FormControl>
-                            <Textarea
-                              placeholder="Tell the job poster why you're the perfect candidate..."
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={form.control}
-                      name="resume_url"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Resume URL</FormLabel>
-                          <FormControl>
-                            <Input
-                              placeholder="https://your-resume-url.com"
-                              {...field}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <Button type="submit" disabled={isApplying}>
-                      {isApplying ? 'Submitting...' : 'Submit Application'}
+                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <div>
+                      <FormField
+                        control={form.control}
+                        name="message"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white">COVER LETTER</FormLabel>
+                            <FormControl>
+                              <Textarea
+                                className="bg-[#222] border border-orange-500 text-white placeholder:text-white/40 min-h-[120px]"
+                                placeholder="Tell the job poster why you're the perfect candidate..."
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    <div>
+                      <FormField
+                        control={form.control}
+                        name="resume_url"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel className="text-white">RESUME URL</FormLabel>
+                            <FormControl>
+                              <Input
+                                className="bg-[#222] border border-orange-500 text-white placeholder:text-white/40"
+                                placeholder="https://your-resume-url.com"
+                                {...field}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
+                    {error && (
+                      <div className="rounded bg-red-900/40 border border-red-700 text-red-400 px-4 py-2 text-sm">
+                        {error}
+                      </div>
+                    )}
+                    <Button
+                      type="submit"
+                      disabled={isApplying}
+                      className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded mt-2 shadow-none border-none"
+                    >
+                      {isApplying ? 'Submitting...' : 'SUBMIT APPLICATION'}
                     </Button>
                   </form>
                 </Form>
-              </div>
-            </>
-          )}
-        </CardContent>
-      </Card>
+              </section>
+            )}
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
