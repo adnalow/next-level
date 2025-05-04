@@ -226,6 +226,15 @@ export default function JobApplicationsPage() {
                     <Button
                       variant="outline"
                       size="sm"
+                      className="border border-[#3B5BFF] text-[#3B5BFF] hover:bg-[#001a1a] hover:text-white font-semibold px-8 py-2 rounded-none"
+                      disabled={updating === application.id + 'in_progress'}
+                      onClick={() => updateApplicationStatus(application.id, 'in_progress')}
+                    >
+                      {updating === application.id + 'in_progress' ? 'Accepting...' : 'ACCEPT'}
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       className="border border-[#FF3B3B] text-[#FF3B3B] hover:bg-[#1a0000] hover:text-white font-semibold px-8 py-2 rounded-none"
                       disabled={updating === application.id + 'declined'}
                       onClick={() => updateApplicationStatus(application.id, 'declined')}
