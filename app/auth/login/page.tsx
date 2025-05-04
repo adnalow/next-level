@@ -65,6 +65,13 @@ export default function LoginPage() {
         .eq('user_id', session.user.id)
         .single()
 
+      // Debug: Log session, email, and user type
+      console.log('LOGIN SUCCESS:', {
+        session,
+        email: values.email,
+        userType: profile?.role
+      })
+
       const redirectedFrom = searchParams.get('redirectedFrom')
       const defaultRedirect = profile?.role === 'job_poster' ? '/jobs/new' : '/jobs'
       

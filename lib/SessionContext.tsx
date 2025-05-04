@@ -7,12 +7,16 @@ interface SessionContextType {
   session: any;
   profile: any;
   loading: boolean;
+  setSession: React.Dispatch<React.SetStateAction<any>>;
+  setProfile: React.Dispatch<React.SetStateAction<any>>;
 }
 
 const SessionContext = createContext<SessionContextType>({
   session: null,
   profile: null,
   loading: true,
+  setSession: () => {},
+  setProfile: () => {},
 });
 
 export const useSessionContext = () => useContext(SessionContext);
@@ -41,11 +45,18 @@ export const SessionProvider = ({ children }: { children: React.ReactNode }) => 
       setLoading(false);
     };
     fetchSession();
-    // Optionally, listen for auth state changes here
+
+    // Listen for auth state changes
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, _session) => {
+      fetchSession();
+    });
+    return () => {
+      listener?.subscription.unsubscribe();
+    };
   }, []);
 
   return (
-    <SessionContext.Provider value={{ session, profile, loading }}>
+    <SessionContext.Provider value={{ session, profile, loading, setSession, setProfile }}>
       {children}
     </SessionContext.Provider>
   );

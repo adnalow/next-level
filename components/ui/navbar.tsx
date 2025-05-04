@@ -10,11 +10,13 @@ export function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
   const supabase = createClientComponentClient()
-  const { session, profile } = useSessionContext()
+  const { session, profile, setSession, setProfile } = useSessionContext()
   const userRole = profile?.role || null
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
+    setSession(null)
+    setProfile(null)
     router.push('/auth/login')
     router.refresh()
   }

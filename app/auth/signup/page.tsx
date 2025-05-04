@@ -65,6 +65,26 @@ export default function SignUpPage() {
     if (error) {
       setError(error.message)
     } else {
+      // Fetch session and profile after sign up for debug
+      const { data: { session } } = await supabase.auth.getSession()
+      let userType = values.role
+      let email = values.email
+      if (session) {
+        // Try to fetch user profile role if available
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .single()
+        if (profile?.role) userType = profile.role
+        if (session.user?.email) email = session.user.email
+      }
+      // Debug: Log session, email, and user type
+      console.log('SIGNUP SUCCESS:', {
+        session,
+        email,
+        userType
+      })
       router.push('/')
       router.refresh()
     }

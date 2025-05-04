@@ -42,6 +42,9 @@ interface UserBadge {
 }
 
 export default function BadgeShowcasePage() {
+  // Debug: log session and loading state
+  const { session, loading: sessionLoading } = useSessionContext();
+  console.log('BadgeShowcasePage session:', session, 'sessionLoading:', sessionLoading);
   const [badges, setBadges] = useState<UserBadge[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -51,7 +54,6 @@ export default function BadgeShowcasePage() {
   const [dateFilter, setDateFilter] = useState('') // yyyy-mm
   const supabase = createClientComponentClient()
   const router = useRouter()
-  const { session, loading: sessionLoading } = useSessionContext()
 
   useEffect(() => {
     if (!sessionLoading) fetchBadges()
