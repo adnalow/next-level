@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useSessionContext } from '@/lib/SessionContext'
+import ClientLayout from '../../components/ClientLayout'
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -42,7 +43,15 @@ const formSchema = z.object({
 type FormInput = z.input<typeof formSchema>
 type FormOutput = z.output<typeof formSchema>
 
-export default function CreateJobPage() {
+export default function NewJobPage() {
+  return (
+    <ClientLayout>
+      <CreateJobPage />
+    </ClientLayout>
+  );
+}
+
+function CreateJobPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()

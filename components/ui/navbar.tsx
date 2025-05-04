@@ -6,6 +6,14 @@ import { Button } from './button'
 import Link from 'next/link'
 import { useSessionContext } from '@/lib/SessionContext'
 
+export function NavbarWrapper() {
+  const { session, loading } = useSessionContext();
+  // Optionally, you can show nothing or a loader while loading
+  if (loading) return null;
+  if (!session) return null;
+  return <Navbar />;
+}
+
 export function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
@@ -33,13 +41,21 @@ export function Navbar() {
         {/* Navigation Links */}
         <div className="flex-1 flex justify-center">
           <div className="flex gap-12">
-            <Link href="/jobs" className={`text-base font-semibold uppercase tracking-wider px-1 ${pathname === '/jobs' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 transition-colors`}>JOBS</Link>
             {userRole === 'job_poster' && (
-              <Link href="/jobs/new" className={`text-base font-semibold uppercase tracking-wider px-1 ${pathname === '/jobs/new' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 transition-colors`}>POST JOB</Link>
+              <>
+                <Link href="/jobs" className={`text-base font-semibold uppercase tracking-wider px-1 ${pathname === '/jobs' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 transition-colors`}>JOBS</Link>
+                <Link href="/jobs/new" className={`text-base font-semibold uppercase tracking-wider px-1 ${pathname === '/jobs/new' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 transition-colors`}>POST JOB</Link>
+                <Link href="/applications" className={`text-base font-semibold uppercase tracking-wider px-1 ${pathname === '/applications' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 transition-colors`}>APPLICATIONS</Link>
+                <Link href="/applications/apprenticeship" className={`text-base font-semibold uppercase tracking-wider px-1 ${pathname === '/applications/apprenticeship' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 transition-colors`}>APPRENTICESHIP</Link>
+              </>
             )}
-            <Link href="/applications" className={`text-base font-semibold uppercase tracking-wider px-1 ${pathname === '/applications' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 transition-colors`}>APPLICATIONS</Link>
-            <Link href="/applications/apprenticeship" className={`text-base font-semibold uppercase tracking-wider px-1 ${pathname === '/applications/apprenticeship' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 transition-colors`}>APPRENTICESHIP</Link>
-            <Link href="/badges" className={`text-base font-semibold uppercase tracking-wider px-1 ${pathname === '/badges' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 transition-colors`}>BADGES</Link>
+            {userRole === 'job_seeker' && (
+              <>
+                <Link href="/jobs" className={`text-base font-semibold uppercase tracking-wider px-1 ${pathname === '/jobs' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 transition-colors`}>JOBS</Link>
+                <Link href="/applications" className={`text-base font-semibold uppercase tracking-wider px-1 ${pathname === '/applications' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 transition-colors`}>APPLICATIONS</Link>
+                <Link href="/badges" className={`text-base font-semibold uppercase tracking-wider px-1 ${pathname === '/badges' ? 'text-orange-500' : 'text-white'} hover:text-orange-500 transition-colors`}>BADGES</Link>
+              </>
+            )}
           </div>
         </div>
         {/* Sign Out Button */}

@@ -16,6 +16,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
 import { jobCategories } from '../page'
 import { Building2, Globe, CalendarDays, Tag, Mail, Clock } from 'lucide-react'
+import ClientLayout from '../../components/ClientLayout'
 
 type Job = {
   id: string
@@ -169,117 +170,119 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
   }
 
   return (
-    <div className="min-h-screen bg-[#222] flex justify-center px-2">
-      <div className="w-full max-w-4xl mx-auto py-10">
-        <div className="bg-[#222] rounded-lg shadow border border-[#333]">
-          <div className="px-8 pt-8 pb-4 border-b border-orange-500">
-            <div className="flex items-center justify-between">
-              <h1 className="text-3xl font-bold text-orange-500 tracking-wide">
-                {job.title}
-              </h1>
-              <div className="flex flex-col items-end">
-                <span className="text-xs text-white/70">Posted on</span>
-                <span className="text-sm font-semibold text-white border border-orange-500 rounded px-2 py-1 mt-1 whitespace-nowrap">
-                  {new Date(job.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+    <ClientLayout>
+      <div className="min-h-screen bg-[#222] flex justify-center px-2">
+        <div className="w-full max-w-4xl mx-auto py-10">
+          <div className="bg-[#222] rounded-lg shadow border border-[#333]">
+            <div className="px-8 pt-8 pb-4 border-b border-orange-500">
+              <div className="flex items-center justify-between">
+                <h1 className="text-3xl font-bold text-orange-500 tracking-wide">
+                  {job.title}
+                </h1>
+                <div className="flex flex-col items-end">
+                  <span className="text-xs text-white/70">Posted on</span>
+                  <span className="text-sm font-semibold text-white border border-orange-500 rounded px-2 py-1 mt-1 whitespace-nowrap">
+                    {new Date(job.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
+                  </span>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-3 mt-4">
+                <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
+                  <Building2 className="w-4 h-4 text-orange-500" />
+                  E-Shop Solutions Inc.
+                </span>
+                <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
+                  <Globe className="w-4 h-4 text-orange-500" />
+                  Remote
+                </span>
+                <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
+                  <Clock className="w-4 h-4 text-orange-500" />
+                  {job.duration_days} {job.duration_days === 1 ? 'day' : 'days'}
                 </span>
               </div>
             </div>
-            <div className="flex flex-wrap gap-3 mt-4">
-              <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
-                <Building2 className="w-4 h-4 text-orange-500" />
-                E-Shop Solutions Inc.
-              </span>
-              <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
-                <Globe className="w-4 h-4 text-orange-500" />
-                Remote
-              </span>
-              <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
-                <Clock className="w-4 h-4 text-orange-500" />
-                {job.duration_days} {job.duration_days === 1 ? 'day' : 'days'}
-              </span>
-            </div>
-          </div>
 
-          <div className="px-8 py-6 space-y-8">
-            <section>
-              <h2 className="text-lg font-semibold text-orange-500 mb-2 border-l-4 border-orange-500 pl-2">Description</h2>
-              <p className="text-white/90 text-base leading-relaxed">{job.description}</p>
-            </section>
-
-            <section>
-              <h2 className="text-lg font-semibold text-orange-500 mb-2 border-l-4 border-orange-500 pl-2">Skills</h2>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {job.skill_tags.map((tag, idx) => (
-                  <span key={idx} className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
-                    <Tag className="w-4 h-4 text-orange-500" />
-                    {tag}
-                  </span>
-                ))}
-              </div>
-            </section>
-
-            {userRole === 'job_seeker' && (
-              <section className="bg-[#181818] border border-orange-500 rounded-lg px-6 py-8 mt-8">
-                <h2 className="text-xl font-bold text-orange-500 mb-6">APPLY FOR THIS JOB</h2>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                    <div>
-                      <FormField
-                        control={form.control}
-                        name="message"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">COVER LETTER</FormLabel>
-                            <FormControl>
-                              <Textarea
-                                className="bg-[#222] border border-orange-500 text-white placeholder:text-white/40 min-h-[120px]"
-                                placeholder="Tell the job poster why you're the perfect candidate..."
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    <div>
-                      <FormField
-                        control={form.control}
-                        name="resume_url"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel className="text-white">RESUME URL</FormLabel>
-                            <FormControl>
-                              <Input
-                                className="bg-[#222] border border-orange-500 text-white placeholder:text-white/40"
-                                placeholder="https://your-resume-url.com"
-                                {...field}
-                              />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                    </div>
-                    {error && (
-                      <div className="rounded bg-red-900/40 border border-red-700 text-red-400 px-4 py-2 text-sm">
-                        {error}
-                      </div>
-                    )}
-                    <Button
-                      type="submit"
-                      disabled={isApplying}
-                      className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded mt-2 shadow-none border-none"
-                    >
-                      {isApplying ? 'Submitting...' : 'SUBMIT APPLICATION'}
-                    </Button>
-                  </form>
-                </Form>
+            <div className="px-8 py-6 space-y-8">
+              <section>
+                <h2 className="text-lg font-semibold text-orange-500 mb-2 border-l-4 border-orange-500 pl-2">Description</h2>
+                <p className="text-white/90 text-base leading-relaxed">{job.description}</p>
               </section>
-            )}
+
+              <section>
+                <h2 className="text-lg font-semibold text-orange-500 mb-2 border-l-4 border-orange-500 pl-2">Skills</h2>
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {job.skill_tags.map((tag, idx) => (
+                    <span key={idx} className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
+                      <Tag className="w-4 h-4 text-orange-500" />
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </section>
+
+              {userRole === 'job_seeker' && (
+                <section className="bg-[#181818] border border-orange-500 rounded-lg px-6 py-8 mt-8">
+                  <h2 className="text-xl font-bold text-orange-500 mb-6">APPLY FOR THIS JOB</h2>
+                  <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                      <div>
+                        <FormField
+                          control={form.control}
+                          name="message"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white">COVER LETTER</FormLabel>
+                              <FormControl>
+                                <Textarea
+                                  className="bg-[#222] border border-orange-500 text-white placeholder:text-white/40 min-h-[120px]"
+                                  placeholder="Tell the job poster why you're the perfect candidate..."
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      <div>
+                        <FormField
+                          control={form.control}
+                          name="resume_url"
+                          render={({ field }) => (
+                            <FormItem>
+                              <FormLabel className="text-white">RESUME URL</FormLabel>
+                              <FormControl>
+                                <Input
+                                  className="bg-[#222] border border-orange-500 text-white placeholder:text-white/40"
+                                  placeholder="https://your-resume-url.com"
+                                  {...field}
+                                />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                      </div>
+                      {error && (
+                        <div className="rounded bg-red-900/40 border border-red-700 text-red-400 px-4 py-2 text-sm">
+                          {error}
+                        </div>
+                      )}
+                      <Button
+                        type="submit"
+                        disabled={isApplying}
+                        className="w-full bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 rounded mt-2 shadow-none border-none"
+                      >
+                        {isApplying ? 'Submitting...' : 'SUBMIT APPLICATION'}
+                      </Button>
+                    </form>
+                  </Form>
+                </section>
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </ClientLayout>
   )
 }
