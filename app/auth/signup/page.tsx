@@ -85,7 +85,7 @@ export default function SignUpPage() {
         email,
         userType
       })
-      router.push('/')
+      router.push('/jobs')
       router.refresh()
     }
   }
