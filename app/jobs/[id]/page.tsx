@@ -14,7 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Textarea } from '@/components/ui/textarea'
 import { Input } from '@/components/ui/input'
-import { jobCategories } from '../page'
+import { jobCategories } from '@/lib/constants'
 import { Building2, Globe, CalendarDays, Tag, Mail, Clock } from 'lucide-react'
 import ClientLayout from '../../components/ClientLayout'
 
