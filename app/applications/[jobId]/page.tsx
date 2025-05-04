@@ -5,7 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { FileText, Globe } from "lucide-react"
+import { FileText, Globe, Unlock, X } from "lucide-react"
 
 type Application = {
   id: string
@@ -160,10 +160,14 @@ export default function JobApplicationsPage() {
             <Button
               variant="outline"
               size="sm"
-              className="border border-[#FF3B3B] text-[#FF3B3B] hover:bg-[#1a0000] hover:text-white font-semibold px-6 py-2 rounded-none text-base flex items-center gap-2"
+              className={`border ${job.status === 'open' ? 'border-[#FF3B3B] text-[#FF3B3B] hover:bg-[#1a0000]' : 'border-[#3B5BFF] text-[#3B5BFF] hover:bg-[#001a1a]'} hover:text-white font-semibold px-6 py-2 rounded-none text-base flex items-center gap-2`}
               onClick={() => updateJobStatus(job.status === 'open' ? 'closed' : 'open')}
             >
-              <span className="text-lg">&#10006;</span> CLOSE JOB
+              {job.status === 'open' ? (
+                <><X className="w-5 h-5" /> CLOSE JOB</>
+              ) : (
+                <><Unlock className="w-5 h-5" /> OPEN JOB</>
+              )}
             </Button>
           )}
         </div>
