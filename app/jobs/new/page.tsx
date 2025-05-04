@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { useSessionContext } from '@/lib/SessionContext'
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -46,36 +47,22 @@ export default function CreateJobPage() {
   const [isLoading, setIsLoading] = useState(true)
   const router = useRouter()
   const supabase = createClientComponentClient()
+  const { session, profile, loading: sessionLoading } = useSessionContext()
 
-  // Check authentication on mount
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      
-      if (sessionError || !session) {
-        console.error('Session error:', sessionError)
+    if (!sessionLoading) {
+      if (!session) {
         router.push('/auth/login')
         return
       }
-
-      // Check if user is a job poster
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('user_id', session.user.id)
-        .single()
-
-      if (profileError || profile?.role !== 'job_poster') {
-        console.error('Profile error:', profileError)
+      if (profile?.role !== 'job_poster') {
         router.push('/')
         return
       }
-
       setIsLoading(false)
     }
-
-    checkAuth()
-  }, [router, supabase])
+    // eslint-disable-next-line
+  }, [sessionLoading, session, profile])
 
   const form = useForm<FormInput>({
     resolver: zodResolver(formSchema),
@@ -93,20 +80,12 @@ export default function CreateJobPage() {
     setIsLoading(true)
 
     try {
-      const { data: { session }, error: sessionError } = await supabase.auth.getSession()
-      
-      if (sessionError || !session) {
-        setError('Authentication error: ' + (sessionError?.message || 'No active session'))
+      if (!session) {
+        setError('Authentication error: No active session')
         return
       }
 
-      const { data: profile, error: profileError } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('user_id', session.user.id)
-        .single()
-
-      if (profileError || profile?.role !== 'job_poster') {
+      if (profile?.role !== 'job_poster') {
         setError('You must be a job poster to create listings')
         return
       }

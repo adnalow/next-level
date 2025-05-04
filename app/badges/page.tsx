@@ -8,6 +8,7 @@ import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMedal } from '@fortawesome/free-solid-svg-icons'
+import { useSessionContext } from '@/lib/SessionContext'
 
 const JOB_CATEGORIES = [
   { value: 'digital_design', label: 'Digital Design' },
@@ -50,15 +51,16 @@ export default function BadgeShowcasePage() {
   const [dateFilter, setDateFilter] = useState('') // yyyy-mm
   const supabase = createClientComponentClient()
   const router = useRouter()
+  const { session, loading: sessionLoading } = useSessionContext()
 
   useEffect(() => {
-    fetchBadges()
-  }, [])
+    if (!sessionLoading) fetchBadges()
+    // eslint-disable-next-line
+  }, [sessionLoading, session])
 
   async function fetchBadges() {
     setLoading(true)
     setError(null)
-    const { data: { session } } = await supabase.auth.getSession()
     if (!session) {
       setError('Not logged in')
       setLoading(false)

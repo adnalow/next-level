@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { useSessionContext } from '@/lib/SessionContext'
 
 type Application = {
   id: string
@@ -38,15 +39,17 @@ export default function ApplicationsPage() {
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [userRole, setUserRole] = useState<string | null>(null)
   const router = useRouter()
   const supabase = createClientComponentClient()
+  const { session, profile, loading: sessionLoading } = useSessionContext()
+  const userRole = profile?.role || null
 
   useEffect(() => {
-    checkUserRole()
-  }, [])
-
-  useEffect(() => {
+    if (sessionLoading) return
+    if (!session) {
+      router.push('/auth/login')
+      return
+    }
     if (userRole) {
       if (userRole === 'job_poster') {
         fetchJobs()
@@ -54,31 +57,12 @@ export default function ApplicationsPage() {
         fetchApplications()
       }
     }
-  }, [userRole])
-
-  const checkUserRole = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) {
-      router.push('/auth/login')
-      return
-    }
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('user_id', session.user.id)
-      .single()
-
-    if (profile) {
-      setUserRole(profile.role)
-    }
-  }
+    // eslint-disable-next-line
+  }, [session, userRole, sessionLoading])
 
   const fetchApplications = async () => {
     setLoading(true)
-    const { data: { session } } = await supabase.auth.getSession()
     if (!session) return
-
     try {
       let data, error
       if (userRole === 'job_seeker') {
@@ -89,7 +73,6 @@ export default function ApplicationsPage() {
           .order('created_at', { ascending: false })
         )
       } else {
-        // Fetch job IDs posted by this user
         const { data: jobs, error: jobsError } = await supabase
           .from('jobs')
           .select('id')
@@ -122,7 +105,6 @@ export default function ApplicationsPage() {
 
   const fetchJobs = async () => {
     setLoading(true)
-    const { data: { session } } = await supabase.auth.getSession()
     if (!session) return
     try {
       const { data, error } = await supabase

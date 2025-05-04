@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { use } from 'react'
+import { useSessionContext } from '@/lib/SessionContext'
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -42,6 +43,7 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
   const [isApplying, setIsApplying] = useState(false)
   const router = useRouter()
   const supabase = createClientComponentClient()
+  const { session, profile, loading: sessionLoading } = useSessionContext()
 
   const form = useForm<z.infer<typeof applicationSchema>>({
     resolver: zodResolver(applicationSchema),
@@ -53,8 +55,11 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
 
   useEffect(() => {
     fetchJob()
-    checkUserRole()
-  }, [id])
+    if (!sessionLoading && session) {
+      setUserRole(profile?.role || null)
+    }
+    // eslint-disable-next-line
+  }, [id, sessionLoading, session, profile])
 
   const fetchJob = async () => {
     try {
@@ -106,27 +111,11 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
     }
   }
 
-  const checkUserRole = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) return
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('user_id', session.user.id)
-      .single()
-
-    if (profile) {
-      setUserRole(profile.role)
-    }
-  }
-
   async function onSubmit(data: z.infer<typeof applicationSchema>) {
     setError(null)
     setIsApplying(true)
 
     try {
-      const { data: { session } } = await supabase.auth.getSession()
       if (!session) {
         router.push('/auth/login')
         return

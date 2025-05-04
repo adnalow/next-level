@@ -4,34 +4,14 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter, usePathname } from 'next/navigation'
 import { Button } from './button'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useSessionContext } from '@/lib/SessionContext'
 
 export function Navbar() {
   const router = useRouter()
   const pathname = usePathname()
   const supabase = createClientComponentClient()
-  const [userRole, setUserRole] = useState<string | null>(null)
-
-  useEffect(() => {
-    // Debug: Check if env variables are available
-    console.log('SUPABASE_URL:', process.env.NEXT_PUBLIC_SUPABASE_URL)
-    checkUserRole()
-  }, [])
-
-  const checkUserRole = async () => {
-    const { data: { session } } = await supabase.auth.getSession()
-    if (!session) return
-
-    const { data: profile } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('user_id', session.user.id)
-      .single()
-
-    if (profile) {
-      setUserRole(profile.role)
-    }
-  }
+  const { session, profile } = useSessionContext()
+  const userRole = profile?.role || null
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()

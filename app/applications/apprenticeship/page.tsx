@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { useSessionContext } from '@/lib/SessionContext'
 
 export default function ApprenticeshipPage() {
   const [jobs, setJobs] = useState<any[]>([])
@@ -12,16 +13,19 @@ export default function ApprenticeshipPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const supabase = createClientComponentClient()
+  const { session, loading: sessionLoading } = useSessionContext()
 
   useEffect(() => {
-    fetchApprenticeships()
-    fetchApprentices()
-  }, [])
+    if (!sessionLoading && session) {
+      fetchApprenticeships()
+      fetchApprentices()
+    }
+    // eslint-disable-next-line
+  }, [sessionLoading, session])
 
   const fetchApprenticeships = async () => {
     setLoading(true)
     setError(null)
-    const { data: { session } } = await supabase.auth.getSession()
     if (!session) return
     try {
       // Get jobs posted by this user that are closed or completed
@@ -51,7 +55,6 @@ export default function ApprenticeshipPage() {
   const fetchApprentices = async () => {
     setLoading(true)
     setError(null)
-    const { data: { session } } = await supabase.auth.getSession()
     if (!session) return
     try {
       // Get all jobs posted by this user
