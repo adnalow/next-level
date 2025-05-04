@@ -74,63 +74,57 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-0">
-      <div className="container relative flex min-h-screen flex-col items-center justify-center">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px] md:w-[450px]">
-          <Card>
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold tracking-tight">Welcome back</CardTitle>
-              <CardDescription>
-                Sign in to continue your journey
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {error && (
-                <div className="mb-4 rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-                  {error}
-                </div>
-              )}
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
-                        <FormControl>
-                          <Input placeholder="you@example.com" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <Input type="password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" className="w-full">Sign In</Button>
-                </form>
-              </Form>
-            </CardContent>
-            <CardFooter className="flex justify-center">
-              <p className="text-sm text-muted-foreground">
+    <div className="min-h-screen bg-[#111010] flex flex-col items-center py-0">
+      {/* Orange top border */}
+      <div className="w-full h-[2px] bg-[#ff8800] mb-4" />
+      <div className="w-full flex-1 flex flex-col items-center justify-center">
+        <div className="w-full max-w-md px-4 flex flex-col items-center justify-center">
+          <div className="w-full bg-[#232323] p-8" style={{boxShadow: 'none', borderRadius: 0}}>
+            <h1 className="text-3xl font-bold text-[#ff8800] uppercase tracking-wide mb-2 text-left">Welcome back</h1>
+            <p className="mb-8 text-gray-300 text-base text-left">Sign in to continue your journey</p>
+            {error && (
+              <div className="mb-4 rounded-md bg-red-900/40 p-3 text-sm text-red-400">
+                {error}
+              </div>
+            )}
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase text-white font-bold tracking-wide">Email</FormLabel>
+                      <FormControl>
+                        <Input className="bg-black text-white border-none placeholder-gray-300 focus:ring-0 focus:border-none" placeholder="you@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase text-white font-bold tracking-wide">Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" className="bg-black text-white border-none placeholder-gray-300 focus:ring-0 focus:border-none" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full bg-[#ff8800] text-black font-normal py-3 rounded-none hover:bg-[#ff8800] transition-colors uppercase tracking-wide text-lg">Sign In</Button>
+              </form>
+            </Form>
+            <div className="flex justify-center mt-8">
+              <p className="text-sm text-gray-400">
                 Don't have an account?{' '}
-                <Link href="/auth/signup" className="text-primary hover:underline">
-                  Sign Up
-                </Link>
+                <Link href="/auth/signup" className="text-[#ff8800] hover:underline font-bold">Sign Up</Link>
               </p>
-            </CardFooter>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>

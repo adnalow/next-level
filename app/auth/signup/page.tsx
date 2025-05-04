@@ -71,84 +71,78 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background p-0">
-      <div className="container relative flex min-h-screen flex-col items-center justify-center">
-        <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px] md:w-[450px]">
-          <Card>
-            <CardHeader className="space-y-1">
-              <CardTitle className="text-2xl font-bold tracking-tight">Create an account</CardTitle>
-              <CardDescription>
-                Choose your role and start exploring opportunities
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {error && (
-                <div className="mb-4 rounded-md bg-destructive/15 p-3 text-sm text-destructive">
-                  {error}
-                </div>
-              )}
-              <Form {...form}>
-                <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                  <FormField
-                    control={form.control}
-                    name="email"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Email</FormLabel>
+    <div className="min-h-screen bg-[#111010] flex flex-col items-center py-0">
+      {/* Orange top border */}
+      <div className="w-full h-[2px] bg-[#ff8800] mb-4" />
+      <div className="w-full flex-1 flex flex-col items-center justify-center">
+        <div className="w-full max-w-md px-4 flex flex-col items-center justify-center">
+          <div className="w-full bg-[#232323] p-8" style={{boxShadow: 'none', borderRadius: 0}}>
+            <h1 className="text-3xl font-bold text-[#ff8800] uppercase tracking-wide mb-2 text-left">Create an account</h1>
+            <p className="mb-8 text-gray-300 text-base text-left">Choose your role and start exploring opportunities</p>
+            {error && (
+              <div className="mb-4 rounded-md bg-red-900/40 p-3 text-sm text-red-400">
+                {error}
+              </div>
+            )}
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <FormField
+                  control={form.control}
+                  name="email"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase text-white font-bold tracking-wide">Email</FormLabel>
+                      <FormControl>
+                        <Input className="bg-black text-white border-none placeholder-gray-300 focus:ring-0 focus:border-none" placeholder="you@example.com" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="password"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase text-white font-bold tracking-wide">Password</FormLabel>
+                      <FormControl>
+                        <Input type="password" className="bg-black text-white border-none placeholder-gray-300 focus:ring-0 focus:border-none" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="role"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase text-white font-bold tracking-wide">I want to...</FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
                         <FormControl>
-                          <Input placeholder="you@example.com" {...field} />
+                          <SelectTrigger className="bg-black text-white border-none focus:ring-0 focus:border-none">
+                            <SelectValue placeholder="Select your role" />
+                          </SelectTrigger>
                         </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="password"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Password</FormLabel>
-                        <FormControl>
-                          <Input type="password" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="role"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>I want to...</FormLabel>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select your role" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            <SelectItem value="job_seeker">Find Opportunities</SelectItem>
-                            <SelectItem value="job_poster">Post Jobs</SelectItem>
-                          </SelectContent>
-                        </Select>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <Button type="submit" className="w-full">Sign Up</Button>
-                </form>
-              </Form>
-            </CardContent>
-            <CardFooter className="flex justify-center">
-              <p className="text-sm text-muted-foreground">
+                        <SelectContent className="bg-[#262626] text-white border-none">
+                          <SelectItem value="job_seeker" className="hover:bg-black focus:bg-black">Find Opportunities</SelectItem>
+                          <SelectItem value="job_poster" className="hover:bg-black focus:bg-black">Post Jobs</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <Button type="submit" className="w-full bg-[#ff8800] text-black font-normal py-3 rounded-none hover:bg-[#ff8800] transition-colors uppercase tracking-wide text-lg">Sign Up</Button>
+              </form>
+            </Form>
+            <div className="flex justify-center mt-8">
+              <p className="text-sm text-gray-400">
                 Already have an account?{' '}
-                <Link href="/auth/login" className="text-primary hover:underline">
-                  Sign In
-                </Link>
+                <Link href="/auth/login" className="text-[#ff8800] hover:underline font-bold">Sign In</Link>
               </p>
-            </CardFooter>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     </div>
