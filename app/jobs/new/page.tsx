@@ -187,24 +187,26 @@ function CreateJobPage() {
     <div className="min-h-screen bg-[#111010] flex flex-col items-center py-0">
       {/* Orange top border */}
       <div className="w-full h-[2px] bg-[#ff8800] mb-4" />
-      {/* Title and icon left-aligned */}
-      <div className="w-full max-w-4xl flex items-center px-6 mb-6">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="mr-2" xmlns="http://www.w3.org/2000/svg">
-          <rect x="3" y="7" width="18" height="13" rx="2" fill="none" stroke="#ff8800" strokeWidth="2"/>
-          <path d="M16 7V5a4 4 0 0 0-8 0v2" stroke="#ff8800" strokeWidth="2" fill="none"/>
-        </svg>
-        <h1 className="text-3xl font-normal text-[#ff8800] uppercase tracking-wide">Post a New Job</h1>
+      {/* Title and icon left-aligned, responsive */}
+      <div className="w-full max-w-4xl flex flex-col sm:flex-row items-start sm:items-center px-4 sm:px-6 mb-6 gap-2 sm:gap-0">
+        <div className="flex items-center mb-2 sm:mb-0">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="mr-2" xmlns="http://www.w3.org/2000/svg">
+            <rect x="3" y="7" width="18" height="13" rx="2" fill="none" stroke="#ff8800" strokeWidth="2"/>
+            <path d="M16 7V5a4 4 0 0 0-8 0v2" stroke="#ff8800" strokeWidth="2" fill="none"/>
+          </svg>
+          <h1 className="text-2xl sm:text-3xl font-normal text-[#ff8800] uppercase tracking-wide">Post a New Job</h1>
+        </div>
       </div>
       {/* Card */}
-      <div className="w-full max-w-4xl px-6">
-        <div className="w-full bg-[#232323] p-8" style={{boxShadow: 'none', borderRadius: 0}}>
+      <div className="w-full max-w-4xl px-2 sm:px-6">
+        <div className="w-full bg-[#232323] p-4 sm:p-8" style={{boxShadow: 'none', borderRadius: 0}}>
           {error && (
             <div className="mb-4 rounded-md bg-red-50 p-4 text-red-500">
               {error}
             </div>
           )}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
               <FormField
                 control={form.control}
                 name="title"

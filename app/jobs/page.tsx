@@ -113,8 +113,8 @@ export default function JobsPage() {
       <div className="min-h-screen bg-black text-white flex flex-col items-center">
         {/* Available Jobs Banner */}
         <div className="w-full flex justify-center">
-          <div className="w-full max-w-[1440px] mt-8 mb-8 bg-[#232323] border border-orange-500 rounded-sm p-8 flex flex-col gap-6 relative" style={{ boxShadow: 'none' }}>
-            <div className="flex flex-row justify-between items-start w-full">
+          <div className="w-full max-w-[1440px] mt-8 mb-8 bg-[#232323] border border-orange-500 rounded-sm p-4 sm:p-6 md:p-8 flex flex-col gap-6 relative" style={{ boxShadow: 'none' }}>
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-4 md:gap-0">
               <div>
                 <div className="flex items-center gap-3 mb-1">
                   <FontAwesomeIcon icon={faBriefcase} className="text-2xl text-orange-500" />
@@ -122,21 +122,21 @@ export default function JobsPage() {
                 </div>
                 <p className="text-base text-white font-normal mt-1">Find your next micro-apprenticeship opportunity</p>
               </div>
-              <div className="flex items-center">
-                <div className="flex flex-row items-center border-2 border-orange-500 bg-black rounded-sm px-6 py-4" style={{ boxShadow: 'none' }}>
-                  <div className="flex items-center justify-center w-14 h-14 border-2 border-orange-500 mr-6">
-                    <span className="text-orange-500 font-bold text-2xl">{jobs.length}</span>
+              <div className="flex items-center mt-4 md:mt-0">
+                <div className="flex flex-row items-center border-2 border-orange-500 bg-black rounded-sm px-4 sm:px-6 py-3 sm:py-4" style={{ boxShadow: 'none' }}>
+                  <div className="flex items-center justify-center w-10 h-10 sm:w-14 sm:h-14 border-2 border-orange-500 mr-4 sm:mr-6">
+                    <span className="text-orange-500 font-bold text-xl sm:text-2xl">{jobs.length}</span>
                   </div>
                   <div className="flex flex-col justify-center">
-                    <span className="text-base text-gray-400 leading-tight">Jobs available</span>
-                    <span className="text-base text-white font-bold leading-tight">Ready to apply</span>
+                    <span className="text-sm sm:text-base text-gray-400 leading-tight">Jobs available</span>
+                    <span className="text-sm sm:text-base text-white font-bold leading-tight">Ready to apply</span>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="flex flex-row gap-4 mt-6 w-full items-center">
+            <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-4 md:mt-6 w-full items-stretch md:items-center">
               {/* Search Field - full width, black background, uniform height */}
-              <div className="flex items-center bg-black border border-[#222] rounded-none px-4 h-12 flex-1 min-w-0">
+              <div className="flex items-center bg-black border border-[#222] rounded-none px-3 sm:px-4 h-12 flex-1 min-w-0">
                 <FontAwesomeIcon icon={faSearch} className="text-orange-500 mr-2 text-base" />
                 <Input
                   placeholder="Search for jobs, skills or keywords..."
@@ -149,7 +149,7 @@ export default function JobsPage() {
               {/* Category Dropdown - match search field style and height */}
               <Select value={selectedCategory} onValueChange={handleCategoryChange}>
                 <SelectTrigger
-                  className="w-56 h-12 flex items-center px-4 border border-[#222] rounded-none bg-black text-white text-base font-normal focus:ring-0 focus:outline-none shadow-none min-w-0"
+                  className="w-full md:w-56 h-12 flex items-center px-3 sm:px-4 border border-[#222] rounded-none bg-black text-white text-base font-normal focus:ring-0 focus:outline-none shadow-none min-w-0 mt-2 md:mt-0"
                   style={{ backgroundColor: '#000', borderRadius: 0, borderColor: '#222', color: '#fff', boxShadow: 'none', height: '48px', minHeight: '48px', lineHeight: '48px' }}
                 >
                   <FontAwesomeIcon icon={faFilter} className="text-orange-500 mr-2 text-base" />
@@ -165,7 +165,7 @@ export default function JobsPage() {
               {/* Location Dropdown - match search field style and height */}
               <Select value={selectedLocation} onValueChange={setSelectedLocation}>
                 <SelectTrigger
-                  className="w-56 h-12 flex items-center px-4 border border-[#222] rounded-none bg-black text-white text-base font-normal focus:ring-0 focus:outline-none shadow-none min-w-0"
+                  className="w-full md:w-56 h-12 flex items-center px-3 sm:px-4 border border-[#222] rounded-none bg-black text-white text-base font-normal focus:ring-0 focus:outline-none shadow-none min-w-0 mt-2 md:mt-0"
                   style={{ backgroundColor: '#000', borderRadius: 0, borderColor: '#222', color: '#fff', boxShadow: 'none', height: '48px', minHeight: '48px', lineHeight: '48px' }}
                 >
                   <FontAwesomeIcon icon={faMapMarkerAlt} className="text-orange-500 mr-2 text-base" />
@@ -181,7 +181,7 @@ export default function JobsPage() {
         </div>
         {/* Job Cards Grid */}
         <div className="w-full flex justify-center">
-          <div className="w-full max-w-[1440px] px-1 md:px-2 lg:px-4">
+          <div className="w-full max-w-[1440px] px-1 sm:px-2 md:px-4">
             {loading ? (
               <div className="flex justify-center">
                 <div className="text-center text-orange-400">Loading jobs...</div>
@@ -193,18 +193,18 @@ export default function JobsPage() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid gap-6 sm:grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+              <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                 {jobs.map((job) => {
                   const maxSkillTags = 3;
                   const visibleTags = job.skill_tags.slice(0, maxSkillTags);
                   const extraTags = job.skill_tags.length - maxSkillTags;
                   return (
-                    <div key={job.id} className="relative bg-[#232323] rounded-md flex flex-col min-h-[370px] p-7 border-t-4 border-orange-500 shadow-none overflow-visible w-full max-w-[500px] mx-auto h-full">
+                    <div key={job.id} className="relative bg-[#232323] rounded-md flex flex-col min-h-[370px] p-4 sm:p-7 border-t-4 border-orange-500 shadow-none overflow-visible w-full max-w-full md:max-w-[500px] mx-auto h-full">
                       <div className="flex-1 flex flex-col">
                         {/* Title and Badge Row */}
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
-                            <CardTitle className="text-2xl font-bold text-white leading-snug text-left mb-2">
+                            <CardTitle className="text-xl sm:text-2xl font-bold text-white leading-snug text-left mb-2">
                               {job.title}
                             </CardTitle>
                             {/* Top row: status, category, remote */}
@@ -215,13 +215,13 @@ export default function JobsPage() {
                             </div>
                           </div>
                           {badges[job.id]?.svg && (
-                            <span className="flex-shrink-0 ml-4 mt-1 w-20 h-20 flex items-center justify-center" style={{ display: 'inline-flex' }} dangerouslySetInnerHTML={{ __html: badges[job.id].svg }} />
+                            <span className="flex-shrink-0 ml-2 sm:ml-4 mt-1 w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center" style={{ display: 'inline-flex' }} dangerouslySetInnerHTML={{ __html: badges[job.id].svg }} />
                           )}
                         </div>
                         {/* Description */}
                         <p className="text-sm text-gray-200 mb-4 line-clamp-2 text-left">{job.description}</p>
                         {/* Location and Duration Row */}
-                        <div className="flex items-center gap-8 text-gray-400 text-sm mb-4">
+                        <div className="flex flex-wrap items-center gap-4 sm:gap-8 text-gray-400 text-sm mb-4">
                           <span className="flex items-center gap-1">
                             <FontAwesomeIcon icon={faMapMarkerAlt} />
                             {job.location || 'Remote'}

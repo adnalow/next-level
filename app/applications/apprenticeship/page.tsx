@@ -193,7 +193,7 @@ export default function ApprenticeshipPage() {
   return (
     <ClientLayout>
       <div className="min-h-screen bg-black text-white">
-        <div className="max-w-4xl mx-auto pt-12">
+        <div className="max-w-4xl mx-auto pt-12 px-2 sm:px-6">
           <div className="flex items-center gap-2 mb-2">
             <span className="text-orange-500 text-2xl"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-7 h-7"><path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118A7.5 7.5 0 0112 15.75a7.5 7.5 0 017.5 4.368M18 21.75a.75.75 0 100-1.5.75.75 0 000 1.5z" /></svg></span>
             <h1 className="text-3xl font-bold tracking-wide text-orange-500">APPRENTICESHIP</h1>
@@ -203,20 +203,20 @@ export default function ApprenticeshipPage() {
             <div className="rounded-md bg-red-900/40 p-3 text-sm text-red-400 mb-6">{error}</div>
           )}
           {apprentice ? (
-            <div className="bg-[#222] border border-[#333] max-w-full mx-auto mt-4" style={{marginLeft: 'auto', marginRight: 'auto'}}>
-              <div className="flex flex-row items-center justify-between px-6 py-10">
-                <div className="flex-1 min-w-0">
-                  <div className="text-[1.5rem] font-bold text-white uppercase mb-2" style={{letterSpacing: '0px'}}>{apprentice.jobTitle}</div>
-                  <div className="flex items-center gap-2 mb-1">
+            <div className="bg-[#222] border border-[#333] max-w-full mx-auto mt-4">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 sm:px-6 py-6 sm:py-10 gap-4">
+                <div className="flex-1 min-w-0 w-full">
+                  <div className="text-lg sm:text-[1.5rem] font-bold text-white uppercase mb-2" style={{letterSpacing: '0px'}}>{apprentice.jobTitle}</div>
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 mb-1">
                     <span className="flex items-center text-white text-base"><User className="mr-1 text-orange-500 w-5 h-5" />{apprentice.applicantEmail}</span>
-                    <span className="bg-[#2563eb] text-white text-[0.85rem] font-bold rounded-none px-2 py-1 ml-2 uppercase" style={{lineHeight:'1.1',letterSpacing:'0.5px'}}>IN PROGRESS</span>
+                    <span className="bg-[#2563eb] text-white text-[0.85rem] font-bold rounded-none px-2 py-1 sm:ml-2 uppercase" style={{lineHeight:'1.1',letterSpacing:'0.5px'}}>IN PROGRESS</span>
                   </div>
                   <div className="text-gray-400 text-sm mt-1">Accepted: {apprentice.accepted_at ? new Date(apprentice.accepted_at).toLocaleString() : new Date(apprentice.created_at).toLocaleString()}</div>
                 </div>
-                <div className="flex items-center h-full ml-8">
+                <div className="flex items-center h-full w-full sm:w-auto ml-0 sm:ml-8">
                   <button
-                    className="bg-[#FF8800] text-black font-bold px-8 py-3 text-base uppercase tracking-normal shadow-none border-none rounded-none hover:bg-[#ff9900] transition-colors duration-150"
-                    style={{minWidth:'140px'}}
+                    className="w-full sm:w-auto bg-[#FF8800] text-black font-bold px-6 sm:px-8 py-3 text-base uppercase tracking-normal shadow-none border-none rounded-none hover:bg-[#ff9900] transition-colors duration-150"
+                    style={{minWidth:'120px'}}
                     onClick={() => markApprenticeCompleted(apprentice.id)}
                   >
                     COMPLETE

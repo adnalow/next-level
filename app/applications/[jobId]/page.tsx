@@ -144,7 +144,7 @@ export default function JobApplicationsPage() {
   return (
     <ClientLayout>
       <div className="min-h-screen bg-[#111] text-white">
-        <div className="max-w-5xl mx-auto py-8 px-4">
+        <div className="max-w-5xl mx-auto py-8 px-2 sm:px-4">
           {/* Back link */}
           <div className="flex items-center mb-2">
             <span className="text-[#FF8000] text-xl mr-2">&#8592;</span>
@@ -153,16 +153,16 @@ export default function JobApplicationsPage() {
             </button>
           </div>
           {/* Title row */}
-          <div className="flex items-center justify-between mb-2 mt-2">
-            <div className="flex items-center gap-3">
-              <span className="text-[#FF8000] text-3xl"><svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' fill='none' viewBox='0 0 24 24'><path fill='#FF8000' d='M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8.828a2 2 0 0 0-.586-1.414l-4.828-4.828A2 2 0 0 0 13.172 2H6Zm0 2h7.172L20 8.828V20H6V4Zm2 4v2h8V8H8Zm0 4v2h8v-2H8Zm0 4v2h5v-2H8Z'/></svg></span>
-              <h1 className="text-2xl md:text-3xl font-bold text-[#FF8000] tracking-wide uppercase">{job?.title}</h1>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 mt-2 gap-2">
+            <div className="flex items-center gap-2 sm:gap-3 flex-wrap">
+              <span className="text-[#FF8000] text-2xl sm:text-3xl"><svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' fill='none' viewBox='0 0 24 24'><path fill='#FF8000' d='M6 2a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8.828a2 2 0 0 0-.586-1.414l-4.828-4.828A2 2 0 0 0 13.172 2H6Zm0 2h7.172L20 8.828V20H6V4Zm2 4v2h8V8H8Zm0 4v2h8v-2H8Zm0 4v2h5v-2H8Z'/></svg></span>
+              <h1 className="text-lg sm:text-2xl md:text-3xl font-bold text-[#FF8000] tracking-wide uppercase break-words">{job?.title}</h1>
             </div>
             {job && (
               <Button
                 variant="outline"
                 size="sm"
-                className={`border ${job.status === 'open' ? 'border-[#FF3B3B] text-[#FF3B3B] hover:bg-[#1a0000]' : 'border-[#3B5BFF] text-[#3B5BFF] hover:bg-[#001a1a]'} hover:text-white font-semibold px-6 py-2 rounded-none text-base flex items-center gap-2`}
+                className={`border ${job.status === 'open' ? 'border-[#FF3B3B] text-[#FF3B3B] hover:bg-[#1a0000]' : 'border-[#3B5BFF] text-[#3B5BFF] hover:bg-[#001a1a]'} hover:text-white font-semibold px-4 sm:px-6 py-2 rounded-none text-base flex items-center gap-2 w-full sm:w-auto`}
                 onClick={() => updateJobStatus(job.status === 'open' ? 'closed' : 'open')}
               >
                 {job.status === 'open' ? (
@@ -175,7 +175,7 @@ export default function JobApplicationsPage() {
           </div>
           <div className="text-zinc-300 text-sm mb-3">Manage applications to this job posting</div>
           {/* Filters */}
-          <div className="mb-6 flex gap-2">
+          <div className="mb-6 flex flex-wrap gap-2">
             <span className="bg-[#393939] text-xs px-3 py-1 rounded text-white font-medium flex items-center gap-1">
               <FileText className="w-4 h-4 mr-1" />
               manual labor

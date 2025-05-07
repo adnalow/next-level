@@ -33,6 +33,7 @@ const formSchema = z.object({
 
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClientComponentClient()
@@ -47,35 +48,39 @@ export default function LoginForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setError(null)
-
-    const { error: signInError, data: { session } } = await supabase.auth.signInWithPassword({
-      email: values.email,
-      password: values.password,
-    })
-
-    if (signInError) {
-      setError(signInError.message)
-      return
-    }
-
-    if (session) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('user_id', session.user.id)
-        .single()
-
-      // Debug: Log session, email, and user type
-      console.log('LOGIN SUCCESS:', {
-        session,
+    setIsLoading(true)
+    try {
+      const { error: signInError, data: { session } } = await supabase.auth.signInWithPassword({
         email: values.email,
-        userType: profile?.role
+        password: values.password,
       })
 
-      const redirectedFrom = searchParams.get('redirectedFrom')
-      const defaultRedirect = profile?.role === 'job_poster' ? '/jobs/new' : '/jobs'
-      router.push(redirectedFrom || defaultRedirect)
-      router.refresh()
+      if (signInError) {
+        setError(signInError.message)
+        return
+      }
+
+      if (session) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .single()
+
+        // Debug: Log session, email, and user type
+        console.log('LOGIN SUCCESS:', {
+          session,
+          email: values.email,
+          userType: profile?.role
+        })
+
+        const redirectedFrom = searchParams.get('redirectedFrom')
+        const defaultRedirect = profile?.role === 'job_poster' ? '/jobs/new' : '/jobs'
+        router.push(redirectedFrom || defaultRedirect)
+        router.refresh()
+      }
+    } finally {
+      setIsLoading(false)
     }
   }
 
@@ -121,7 +126,14 @@ export default function LoginForm() {
                     </FormItem>
                   )}
                 />
-                <Button type="submit" className="w-full bg-[#ff8800] text-black font-normal py-3 rounded-none hover:bg-[#ff8800] transition-colors uppercase tracking-wide text-lg">Sign In</Button>
+                <Button type="submit" disabled={isLoading} className="w-full bg-[#ff8800] text-black font-normal py-3 rounded-none hover:bg-[#ff8800] transition-colors uppercase tracking-wide text-lg">
+                  {isLoading ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+                      Signing In...
+                    </span>
+                  ) : 'Sign In'}
+                </Button>
               </form>
             </Form>
             <div className="flex justify-center mt-8">

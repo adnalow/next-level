@@ -172,9 +172,9 @@ export default function ApplicationsPage() {
 
   return (
     <ClientLayout>
-      <div className="min-h-screen bg-black px-4 py-10">
-        <div className="max-w-7xl mx-auto">
-          <h1 className="text-4xl font-bold text-[#ff8000] mb-10 tracking-wide uppercase" style={{letterSpacing: '2px'}}>
+      <div className="min-h-screen bg-black px-2 sm:px-4 py-6 sm:py-10">
+        <div className="max-w-7xl mx-auto w-full">
+          <h1 className="text-2xl sm:text-4xl font-bold text-[#ff8000] mb-6 sm:mb-10 tracking-wide uppercase" style={{letterSpacing: '2px'}}>
             {userRole === 'job_seeker' ? 'MY APPLICATIONS' : 'MY POSTED JOBS'}
           </h1>
           {error && (
@@ -190,9 +190,9 @@ export default function ApplicationsPage() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+              <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
                 {jobs.map((job) => (
-                  <div key={job.id} className="bg-[#232323] rounded shadow-lg p-6 flex flex-col min-h-[220px] border border-[#222]">
+                  <div key={job.id} className="bg-[#232323] rounded shadow-lg p-4 sm:p-6 flex flex-col min-h-[220px] border border-[#222] w-full">
                     <div className="mb-4">
                       <div className="text-2xl font-bold text-white leading-tight mb-4 uppercase" style={{letterSpacing: '1px'}}>{job.title}</div>
                       <div className="flex flex-wrap gap-2 mb-6">
@@ -224,14 +224,14 @@ export default function ApplicationsPage() {
               </Card>
             ) : (
               userRole === 'job_seeker' ? (
-                <div className="grid gap-8 md:grid-cols-2 xl:grid-cols-2">
+                <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
                   {applications.map((application) => (
                     <div
                       key={application.id}
-                      className="bg-[#232323] rounded shadow-lg flex flex-col min-h-[340px] border border-[#222]"
+                      className="bg-[#232323] rounded shadow-lg flex flex-col min-h-[340px] border border-[#222] w-full"
                     >
-                      <div className="p-8 pb-4 flex-1 flex flex-col">
-                        <div className="text-xl md:text-2xl font-bold text-white leading-tight mb-4 uppercase tracking-wide" style={{letterSpacing: '1px'}}>
+                      <div className="p-4 sm:p-8 pb-4 flex-1 flex flex-col">
+                        <div className="text-lg sm:text-2xl font-bold text-white leading-tight mb-4 uppercase tracking-wide" style={{letterSpacing: '1px'}}>
                           {application.job.title}
                         </div>
                         <div className="flex flex-wrap gap-2 mb-6">
@@ -265,7 +265,7 @@ export default function ApplicationsPage() {
                           </a>
                         </div>
                       </div>
-                      <div className="bg-[#2d2d2d] px-8 py-4 flex items-center justify-between rounded-b">
+                      <div className="bg-[#2d2d2d] px-4 sm:px-8 py-4 flex flex-col sm:flex-row items-center justify-between gap-2 rounded-b">
                         <div className="flex items-center gap-4 text-[#ff8000] text-sm font-medium">
                           <span className="flex items-center gap-1">
                             <MapPin className="w-4 h-4" />
@@ -281,92 +281,94 @@ export default function ApplicationsPage() {
                   ))}
                 </div>
               ) : (
-                applications.map((application) => (
-                  <Card key={application.id}>
-                    <CardHeader>
-                      <CardTitle className="line-clamp-2">{application.job.title}</CardTitle>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs text-primary">
-                          {application.job.category}
-                        </span>
-                        <span className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs">
-                          {application.job.location}
-                        </span>
-                        <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs ${
-                          application.status === 'completed' ? 'bg-green-100 text-green-700' :
-                          application.status === 'declined' ? 'bg-red-100 text-red-700' :
-                          application.status === 'in_progress' ? 'bg-blue-100 text-blue-700' :
-                          'bg-gray-100 text-gray-700'
-                        }`}>
-                          {application.status.replace('_', ' ')}
-                        </span>
-                      </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {userRole === 'job_poster' && (
+                <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-2">
+                  {applications.map((application) => (
+                    <Card key={application.id} className="w-full">
+                      <CardHeader>
+                        <CardTitle className="line-clamp-2">{application.job.title}</CardTitle>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          <span className="inline-flex items-center rounded-md bg-primary/10 px-2 py-1 text-xs text-primary">
+                            {application.job.category}
+                          </span>
+                          <span className="inline-flex items-center rounded-md bg-muted px-2 py-1 text-xs">
+                            {application.job.location}
+                          </span>
+                          <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs ${
+                            application.status === 'completed' ? 'bg-green-100 text-green-700' :
+                            application.status === 'declined' ? 'bg-red-100 text-red-700' :
+                            application.status === 'in_progress' ? 'bg-blue-100 text-blue-700' :
+                            'bg-gray-100 text-gray-700'
+                          }`}>
+                            {application.status.replace('_', ' ')}
+                          </span>
+                        </div>
+                      </CardHeader>
+                      <CardContent className="space-y-4">
+                        {userRole === 'job_poster' && (
+                          <div>
+                            <p className="text-sm font-medium">Applicant</p>
+                            <p className="text-sm text-muted-foreground">{application.applicant.email}</p>
+                          </div>
+                        )}
                         <div>
-                          <p className="text-sm font-medium">Applicant</p>
-                          <p className="text-sm text-muted-foreground">{application.applicant.email}</p>
+                          <p className="text-sm font-medium">Cover Letter</p>
+                          <p className="text-sm text-muted-foreground">{application.message}</p>
                         </div>
-                      )}
-                      <div>
-                        <p className="text-sm font-medium">Cover Letter</p>
-                        <p className="text-sm text-muted-foreground">{application.message}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium">Resume</p>
-                        <a
-                          href={application.resume_url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-primary hover:underline"
-                        >
-                          View Resume
-                        </a>
-                      </div>
-                      {userRole === 'job_poster' && application.status === 'applied' && (
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="flex-1"
-                            onClick={() => updateApplicationStatus(application.id, 'in_progress', application.job_id)}
+                        <div>
+                          <p className="text-sm font-medium">Resume</p>
+                          <a
+                            href={application.resume_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-sm text-primary hover:underline"
                           >
-                            Accept
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="flex-1"
-                            onClick={() => updateApplicationStatus(application.id, 'declined')}
-                          >
-                            Decline
-                          </Button>
+                            View Resume
+                          </a>
                         </div>
-                      )}
-                      {userRole === 'job_poster' && application.status === 'in_progress' && (
-                        <div className="flex gap-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="flex-1"
-                            onClick={() => updateApplicationStatus(application.id, 'completed')}
-                          >
-                            Complete
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="flex-1"
-                            onClick={() => updateApplicationStatus(application.id, 'declined')}
-                          >
-                            Decline
-                          </Button>
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
-                ))
+                        {userRole === 'job_poster' && application.status === 'applied' && (
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() => updateApplicationStatus(application.id, 'in_progress', application.job_id)}
+                            >
+                              Accept
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() => updateApplicationStatus(application.id, 'declined')}
+                            >
+                              Decline
+                            </Button>
+                          </div>
+                        )}
+                        {userRole === 'job_poster' && application.status === 'in_progress' && (
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() => updateApplicationStatus(application.id, 'completed')}
+                            >
+                              Complete
+                            </Button>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              className="flex-1"
+                              onClick={() => updateApplicationStatus(application.id, 'declined')}
+                            >
+                              Decline
+                            </Button>
+                          </div>
+                        )}
+                      </CardContent>
+                    </Card>
+                  ))}
+                </div>
               )
             )
           )}
