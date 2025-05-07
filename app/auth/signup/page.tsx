@@ -95,8 +95,8 @@ export default function SignUpPage() {
       {/* Orange top border */}
       <div className="w-full h-[2px] bg-[#ff8800] mb-4" />
       <div className="w-full flex-1 flex flex-col items-center justify-center">
-        <div className="w-full max-w-md px-4 flex flex-col items-center justify-center">
-          <div className="w-full bg-[#232323] p-8" style={{boxShadow: 'none', borderRadius: 0}}>
+        <div className="w-full max-w-md px-4 sm:px-6 md:px-8 flex flex-col items-center justify-center">
+          <div className="w-full bg-[#232323] p-6 sm:p-8 md:p-10" style={{boxShadow: 'none', borderRadius: 0}}>
             <h1 className="text-3xl font-bold text-[#ff8800] uppercase tracking-wide mb-2 text-left">Create an account</h1>
             <p className="mb-8 text-gray-300 text-base text-left">Choose your role and start exploring opportunities</p>
             {error && (

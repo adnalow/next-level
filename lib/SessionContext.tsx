@@ -32,7 +32,6 @@ export const SessionProvider = ({ children }: { children: React.ReactNode }) => 
     let debounceTimeout: NodeJS.Timeout | null = null;
 
     const fetchSession = async (incomingSession?: any) => {
-      setLoading(true);
       let sessionToUse = incomingSession;
       if (!sessionToUse) {
         const { data: { session } } = await supabase.auth.getSession();
@@ -40,6 +39,7 @@ export const SessionProvider = ({ children }: { children: React.ReactNode }) => 
       }
       // Only update if session actually changed
       if (sessionToUse?.user?.id !== lastSessionId) {
+        setLoading(true);
         setSession(sessionToUse);
         lastSessionId = sessionToUse?.user?.id || null;
         if (sessionToUse) {
@@ -52,8 +52,8 @@ export const SessionProvider = ({ children }: { children: React.ReactNode }) => 
         } else {
           setProfile(null);
         }
+        setLoading(false);
       }
-      setLoading(false);
     };
     fetchSession();
 
@@ -62,7 +62,7 @@ export const SessionProvider = ({ children }: { children: React.ReactNode }) => 
       if (debounceTimeout) clearTimeout(debounceTimeout);
       debounceTimeout = setTimeout(() => {
         fetchSession(newSession);
-      }, 200); // 200ms debounce
+      }, 2000); // Increased debounce to 2000ms
     });
     return () => {
       listener?.subscription.unsubscribe();
