@@ -45,6 +45,7 @@ export default function JobsPage() {
   const [searchTerm, setSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<JobCategory['value'] | 'all'>('all')
   const [selectedLocation, setSelectedLocation] = useState<string>('all')
+  const [locations, setLocations] = useState<string[]>([])
   const supabase = createClientComponentClient()
   const router = useRouter()
 
@@ -78,10 +79,22 @@ export default function JobsPage() {
       console.error('Error fetching jobs:', error)
       setJobs([])
       setBadges({})
+      setLocations([])
       setLoading(false)
       return
     }
     setJobs(data as Job[])
+
+    // Extract unique locations from jobs (trim and normalize case)
+    const uniqueLocations = Array.from(
+      new Set(
+        (data as Job[])
+          .map(j => (j.location || '').trim())
+          .filter(Boolean)
+          .map(loc => loc.toLowerCase() === 'remote' ? 'Remote' : loc)
+      )
+    )
+    setLocations(uniqueLocations)
 
     // Fetch badges for all jobs
     const jobIds = (data as Job[]).map(j => j.id)
@@ -103,6 +116,29 @@ export default function JobsPage() {
   useEffect(() => {
     fetchJobs()
   }, [searchTerm, selectedCategory, selectedLocation])
+
+  // Always update locations list based on all jobs, not just filtered jobs
+  useEffect(() => {
+    const fetchAllLocations = async () => {
+      const { data, error } = await supabase
+        .from('jobs')
+        .select('location')
+        .eq('status', 'open')
+      if (!error && data) {
+        const uniqueLocations = Array.from(
+          new Set(
+            (data as { location: string }[])
+              .map(j => (j.location || '').trim())
+              .filter(Boolean)
+              .map(loc => loc.toLowerCase() === 'remote' ? 'Remote' : loc)
+          )
+        )
+        setLocations(uniqueLocations)
+      }
+    }
+    fetchAllLocations()
+    // eslint-disable-next-line
+  }, [jobs.length]) // update locations whenever jobs change
 
   const handleCategoryChange = (value: string) => {
     setSelectedCategory(value as JobCategory['value'] | 'all')
@@ -173,7 +209,9 @@ export default function JobsPage() {
                 </SelectTrigger>
                 <SelectContent className="bg-[#232323] border-orange-500 text-white">
                   <SelectItem value="all">All Locations</SelectItem>
-                  {/* Optionally, you can map locations here if you have a list */}
+                  {locations.map((loc) => (
+                    <SelectItem key={loc} value={loc} className="hover:bg-orange-500/20">{loc}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
