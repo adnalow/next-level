@@ -1,14 +1,16 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { useSessionContext } from '@/lib/SessionContext'
-import { MapPin, Clock } from 'lucide-react'
+import { MapPin, Clock, ChevronDown, ChevronUp, CheckCircle2 } from 'lucide-react'
 import ClientLayout from '../components/ClientLayout'
+import { Input } from '@/components/ui/input'
+import { jobCategories } from '@/lib/constants'
 
 type Application = {
   id: string
@@ -41,6 +43,11 @@ export default function ApplicationsPage() {
   const [jobs, setJobs] = useState<Job[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [search, setSearch] = useState('')
+  const [category, setCategory] = useState('all')
+  const [location, setLocation] = useState('all')
+  const [status, setStatus] = useState('all')
+  const [openCategories, setOpenCategories] = useState<{[cat:string]:boolean}>({})
   const router = useRouter()
   const supabase = createClientComponentClient()
   const { session, profile, loading: sessionLoading } = useSessionContext()
@@ -162,6 +169,32 @@ export default function ApplicationsPage() {
     }
   }
 
+  // Get unique locations for filter
+  const locations = useMemo(() => {
+    const locs = Array.from(new Set(jobs.map(j => (j.location || '').trim()).filter(Boolean)))
+    return locs.length ? locs : ['Remote']
+  }, [jobs])
+
+  // Filter and group jobs
+  const filteredJobs = useMemo(() => {
+    let filtered = jobs
+    if (search) filtered = filtered.filter(j => j.title.toLowerCase().includes(search.toLowerCase()))
+    if (category !== 'all') filtered = filtered.filter(j => j.category === category)
+    if (location !== 'all') filtered = filtered.filter(j => j.location === location)
+    if (status !== 'all') filtered = filtered.filter(j => j.status === status)
+    return filtered
+  }, [jobs, search, category, location, status])
+
+  const jobsByCategory = useMemo(() => {
+    const grouped: {[cat:string]: Job[]} = {}
+    filteredJobs.forEach(j => {
+      const cat = j.category || 'Other'
+      if (!grouped[cat]) grouped[cat] = []
+      grouped[cat].push(j)
+    })
+    return grouped
+  }, [filteredJobs])
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-black">
@@ -190,30 +223,104 @@ export default function ApplicationsPage() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
-                {jobs.map((job) => (
-                  <div key={job.id} className="bg-[#232323] rounded shadow-lg p-4 sm:p-6 flex flex-col min-h-[220px] border border-[#222] w-full">
-                    <div className="mb-4">
-                      <div className="text-2xl font-bold text-white leading-tight mb-4 uppercase" style={{letterSpacing: '1px'}}>{job.title}</div>
-                      <div className="flex flex-wrap gap-2 mb-6">
-                        <span className="inline-flex items-center rounded bg-[#444] px-3 py-1 text-sm text-white font-bold">{job.category}</span>
-                        <span className="inline-flex items-center rounded bg-[#444] px-3 py-1 text-sm text-white font-bold">{job.location}</span>
-                        <span className={`inline-flex items-center rounded px-3 py-1 text-sm font-bold uppercase tracking-wide ${
-                          job.status === 'open' ? 'bg-[#ff8000] text-white' : 'bg-gray-300 text-gray-700'
-                        }`}>{job.status === 'open' ? 'OPEN' : job.status.toUpperCase()}</span>
+              <>
+                {/* Search & Filters */}
+                <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-8 w-full items-stretch md:items-center">
+                  <Input
+                    placeholder="Search jobs..."
+                    value={search}
+                    onChange={e => setSearch(e.target.value)}
+                    className="bg-[#181818] text-white border border-[#222] rounded-none h-12 px-3 text-base min-w-0"
+                  />
+                  <Select value={category} onValueChange={setCategory}>
+                    <SelectTrigger className="w-full md:w-48 h-12 bg-[#181818] text-white border border-[#222] rounded-none">
+                      <SelectValue placeholder="All Categories" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#232323] text-white">
+                      <SelectItem value="all">All Categories</SelectItem>
+                      {jobCategories.map(cat => (
+                        <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={location} onValueChange={setLocation}>
+                    <SelectTrigger className="w-full md:w-48 h-12 bg-[#181818] text-white border border-[#222] rounded-none">
+                      <SelectValue placeholder="All Locations" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#232323] text-white">
+                      <SelectItem value="all">All Locations</SelectItem>
+                      {locations.map(loc => (
+                        <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <Select value={status} onValueChange={setStatus}>
+                    <SelectTrigger className="w-full md:w-48 h-12 bg-[#181818] text-white border border-[#222] rounded-none">
+                      <SelectValue placeholder="All Statuses" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-[#232323] text-white">
+                      <SelectItem value="all">All Statuses</SelectItem>
+                      <SelectItem value="open">Open</SelectItem>
+                      <SelectItem value="closed">Closed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                {/* Grouped by Category, Collapsible */}
+                <div className="space-y-6">
+                  {Object.entries(jobsByCategory).map(([cat, jobsInCat]) => {
+                    const catLabel = jobCategories.find(c => c.value === cat)?.label || cat
+                    const isOpen = openCategories[cat] ?? true
+                    return (
+                      <div key={cat} className="bg-[#181818] rounded-md border border-[#232323]">
+                        <button
+                          className="w-full flex items-center justify-between px-4 py-3 text-lg font-bold text-white bg-[#232323] rounded-t-md focus:outline-none"
+                          onClick={() => setOpenCategories(prev => ({...prev, [cat]: !isOpen}))}
+                        >
+                          <span>{catLabel}</span>
+                          {isOpen ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
+                        </button>
+                        {isOpen && (
+                          <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 p-4">
+                            {jobsInCat.map(job => (
+                              <div
+                                key={job.id}
+                                className="bg-[#23272f] rounded-xl shadow-lg flex flex-col min-h-[290px] border border-[#222] w-full transition-transform duration-150 hover:scale-[1.02] hover:shadow-[0_0_0_2px_#ff8000,0_8px_32px_0_rgba(0,0,0,0.25)] group"
+                              >
+                                <div className="flex-1 flex flex-col justify-between p-6 pb-0">
+                                  <div>
+                                    <div className="text-2xl font-bold text-white leading-tight mb-3 uppercase break-words" style={{letterSpacing: '1px'}}>{job.title}</div>
+                                    <div className="flex flex-wrap items-center gap-x-3 gap-y-1 mb-2 text-sm text-gray-300">
+                                      <span className="inline-flex items-center gap-1 font-medium">
+                                        <span className="text-xs font-semibold text-gray-400">Category:</span>
+                                        <span>{jobCategories.find(c => c.value === job.category)?.label || job.category}</span>
+                                      </span>
+                                      <span className="inline-flex items-center gap-1 font-medium">
+                                        <span className="text-xs font-semibold text-gray-400">Location:</span>
+                                        <span>{job.location}</span>
+                                      </span>
+                                    </div>
+                                    <div className="mt-2 flex items-center gap-2">
+                                      <span className={`inline-flex items-center gap-1 rounded px-3 py-1 text-xs font-bold uppercase tracking-wide ${job.status === 'open' ? 'bg-[#ff9900] text-white shadow-[0_0_0_2px_#ff9900] border-2 border-[#ff9900]' : 'bg-gray-300 text-gray-700'}`}>{job.status === 'open' && <CheckCircle2 className="w-4 h-4 mr-1 text-white" />} {job.status === 'open' ? 'OPEN' : job.status.toUpperCase()}</span>
+                                    </div>
+                                  </div>
+                                </div>
+                                <div className="mt-auto p-6 pt-0 flex items-end">
+                                  <button
+                                    className="w-full border border-[#ff9900] text-white font-bold py-3 rounded-lg bg-[#232323] hover:bg-[#ff9900] hover:text-black transition-all duration-150 text-base tracking-wide uppercase shadow group-hover:shadow-[0_0_0_2px_#ff9900] focus:outline-none"
+                                    onClick={() => router.push(`/applications/${job.id}`)}
+                                  >
+                                    VIEW DETAILS
+                                  </button>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    </div>
-                    <div className="mt-auto">
-                      <button
-                        className="w-full border border-[#666] text-white font-bold py-3 rounded-none bg-transparent hover:bg-[#222] transition-colors duration-150 text-base tracking-wide uppercase"
-                        onClick={() => router.push(`/applications/${job.id}`)}
-                      >
-                        VIEW DETAILS
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                    )
+                  })}
+                </div>
+              </>
             )
           ) : (
             applications.length === 0 ? (
