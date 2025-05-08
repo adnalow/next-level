@@ -10,6 +10,7 @@ import axios from 'axios'
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useSessionContext } from '@/lib/SessionContext'
 import ClientLayout from '../../components/ClientLayout'
+import { toast } from "sonner"
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -166,6 +167,7 @@ function CreateJobPage() {
         return
       }
 
+      toast(`Job posted successfully!`)
       router.push('/jobs')
     } catch (err) {
       console.error('Unexpected error:', err)

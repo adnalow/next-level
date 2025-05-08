@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { use } from 'react'
 import { useSessionContext } from '@/lib/SessionContext'
+import { toast } from "sonner"
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -141,6 +142,7 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
         return
       }
 
+      toast(`Application submitted successfully!`)
       router.push('/applications')
     } catch (err) {
       setError('An unexpected error occurred')

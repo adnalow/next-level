@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { FileText, Globe, Unlock, X } from "lucide-react"
 import ClientLayout from '../../components/ClientLayout'
+import { toast } from "sonner"
 
 type Application = {
   id: string
@@ -129,6 +130,7 @@ export default function JobApplicationsPage() {
       setError('Error updating application status: ' + error.message)
     } else {
       await fetchJobAndApplications()
+      toast(`Application status updated to '${newStatus.replace('_', ' ')}' successfully.`)
     }
     setUpdating(null)
   }
