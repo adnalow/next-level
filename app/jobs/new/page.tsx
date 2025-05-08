@@ -5,13 +5,14 @@ import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useSessionContext } from '@/lib/SessionContext'
 import ClientLayout from '../../components/ClientLayout'
 import { toast } from "sonner"
 import LoadingScreen from '@/components/ui/LoadingScreen'
+import { X } from 'lucide-react'
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -31,6 +32,13 @@ const jobCategories = [
   { value: 'carpentry', label: 'Carpentry' },
   { value: 'other', label: 'Other' },
 ] as const
+
+const locationOptions = [
+  'Manila, Philippines',
+  'Cebu, Philippines',
+  'Remote',
+  'Other (specify...)',
+]
 
 // Input schema (what the form accepts)
 const formSchema = z.object({
@@ -53,9 +61,62 @@ export default function NewJobPage() {
   );
 }
 
+function SkillTagsInput({ value, onChange }: { value: string; onChange: (val: string) => void }) {
+  const [input, setInput] = useState('')
+  const [tags, setTags] = useState<string[]>(value ? value.split(',').map(t => t.trim()).filter(Boolean) : [])
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  function handleInput(e: React.ChangeEvent<HTMLInputElement>) {
+    setInput(e.target.value)
+  }
+  function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if ((e.key === 'Enter' || e.key === ',') && input.trim()) {
+      e.preventDefault()
+      if (!tags.includes(input.trim())) {
+        const newTags = [...tags, input.trim()]
+        setTags(newTags)
+        onChange(newTags.join(','))
+      }
+      setInput('')
+    } else if (e.key === 'Backspace' && !input && tags.length) {
+      const newTags = tags.slice(0, -1)
+      setTags(newTags)
+      onChange(newTags.join(','))
+    }
+  }
+  function removeTag(idx: number) {
+    const newTags = tags.filter((_, i) => i !== idx)
+    setTags(newTags)
+    onChange(newTags.join(','))
+  }
+  return (
+    <div className="flex flex-wrap gap-2 items-center bg-black px-2 py-2 rounded border border-gray-700 focus-within:border-[#ff8800]">
+      {tags.map((tag, idx) => (
+        <span key={tag} className="flex items-center bg-[#ff8800] text-black px-2 py-1 rounded text-xs font-semibold">
+          {tag}
+          <button type="button" aria-label={`Remove skill ${tag}`} onClick={() => removeTag(idx)} className="ml-1 focus:outline-none">
+            <X className="w-3 h-3 text-black hover:text-red-600" />
+          </button>
+        </span>
+      ))}
+      <input
+        ref={inputRef}
+        value={input}
+        onChange={handleInput}
+        onKeyDown={handleKeyDown}
+        className="bg-black text-white border-none outline-none flex-1 min-w-[120px] placeholder-gray-400"
+        placeholder={tags.length ? '' : 'Press Enter after each skill'}
+        aria-label="Add skill"
+      />
+    </div>
+  )
+}
+
 function CreateJobPage() {
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
+  const [locationType, setLocationType] = useState(locationOptions[0])
+  const [customLocation, setCustomLocation] = useState('')
   const router = useRouter()
   const supabase = createClientComponentClient()
   const { session, profile, loading: sessionLoading } = useSessionContext()
@@ -93,11 +154,13 @@ function CreateJobPage() {
     try {
       if (!session) {
         setError('Authentication error: No active session')
+        setIsLoading(false)
         return
       }
 
       if (profile?.role !== 'job_poster') {
         setError('You must be a job poster to create listings')
+        setIsLoading(false)
         return
       }
 
@@ -122,6 +185,7 @@ function CreateJobPage() {
 
       if (jobError || !insertedJobs || insertedJobs.length === 0) {
         setError('Error creating job: ' + (jobError?.message || 'Unknown error'))
+        setIsLoading(false)
         return
       }
       const jobId = insertedJobs[0].id
@@ -165,15 +229,17 @@ function CreateJobPage() {
         })
       if (badgeError) {
         setError('Job created, but error saving badge: ' + badgeError.message)
+        setIsLoading(false)
         return
       }
 
+      // Only after all DB actions are done, show toast and redirect
+      setIsLoading(false)
       toast(`Job posted successfully!`)
       router.push('/jobs')
     } catch (err) {
       console.error('Unexpected error:', err)
       setError('An unexpected error occurred')
-    } finally {
       setIsLoading(false)
     }
   }
@@ -183,37 +249,37 @@ function CreateJobPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#111010] flex flex-col items-center py-0">
+    <div className="min-h-screen bg-[#181818] flex flex-col items-center py-0">
       {/* Orange top border */}
       <div className="w-full h-[2px] bg-[#ff8800] mb-4" />
       {/* Title and icon left-aligned, responsive */}
       <div className="w-full max-w-4xl flex flex-col sm:flex-row items-start sm:items-center px-4 sm:px-6 mb-6 gap-2 sm:gap-0">
         <div className="flex items-center mb-2 sm:mb-0">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" className="mr-2" xmlns="http://www.w3.org/2000/svg">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" className="mr-3" xmlns="http://www.w3.org/2000/svg">
             <rect x="3" y="7" width="18" height="13" rx="2" fill="none" stroke="#ff8800" strokeWidth="2"/>
             <path d="M16 7V5a4 4 0 0 0-8 0v2" stroke="#ff8800" strokeWidth="2" fill="none"/>
           </svg>
-          <h1 className="text-2xl sm:text-3xl font-normal text-[#ff8800] uppercase tracking-wide">Post a New Job</h1>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#ff8800] uppercase tracking-widest drop-shadow">POST A NEW JOB</h1>
         </div>
       </div>
       {/* Card */}
       <div className="w-full max-w-4xl px-2 sm:px-6">
-        <div className="w-full bg-[#232323] p-4 sm:p-8" style={{boxShadow: 'none', borderRadius: 0}}>
+        <div className="w-full bg-[#232323] p-6 sm:p-10 rounded-lg shadow-lg border border-[#222]">
           {error && (
             <div className="mb-4 rounded-md bg-red-50 p-4 text-red-500">
               {error}
             </div>
           )}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
                 name="title"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="uppercase text-white font-bold tracking-wide">JOB TITLE</FormLabel>
+                    <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">JOB TITLE <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
                     <FormControl>
-                      <Input className="bg-black text-white border-none placeholder-gray-300 focus:ring-0 focus:border-none" placeholder="e.g., Logo Design Project" {...field} />
+                      <Input className={`bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 placeholder-gray-400 ${form.formState.errors.title ? 'border-red-500' : ''}`} placeholder="Enter job title, e.g., Logo Design Project" aria-label="Job title input field" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -225,10 +291,10 @@ function CreateJobPage() {
                 name="category"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="uppercase text-white font-bold tracking-wide">CATEGORY</FormLabel>
+                    <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">CATEGORY <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                       <FormControl>
-                        <SelectTrigger className="bg-black text-white border-none focus:ring-0 focus:border-none">
+                        <SelectTrigger className="bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 flex items-center">
                           <SelectValue placeholder="Select a category" />
                         </SelectTrigger>
                       </FormControl>
@@ -250,11 +316,12 @@ function CreateJobPage() {
                 name="description"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="uppercase text-white font-bold tracking-wide">DESCRIPTION</FormLabel>
+                    <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">DESCRIPTION <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
                     <FormControl>
                       <Textarea 
-                        className="bg-black text-white border-none placeholder-gray-300 focus:ring-0 focus:border-none min-h-[120px]"
-                        placeholder="Describe the job requirements and expectations..." 
+                        className={`bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 min-h-[180px] placeholder-gray-400 ${form.formState.errors.description ? 'border-red-500' : ''}`}
+                        placeholder="Describe the job requirements and expectations in detail..." 
+                        aria-label="Job description input field"
                         {...field} 
                       />
                     </FormControl>
@@ -268,17 +335,11 @@ function CreateJobPage() {
                 name="skillTags"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="uppercase text-white font-bold tracking-wide">REQUIRED SKILLS</FormLabel>
+                    <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">REQUIRED SKILLS <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
                     <FormControl>
-                      <Input 
-                        className="bg-black text-white border-none placeholder-gray-300 focus:ring-0 focus:border-none" 
-                        placeholder="e.g., Photoshop, Illustrator (comma-separated)" 
-                        {...field} 
-                      />
+                      <SkillTagsInput value={field.value} onChange={field.onChange} />
                     </FormControl>
-                    <FormDescription className="text-gray-400">
-                      Enter skills separated by commas
-                    </FormDescription>
+                    <FormDescription className="text-gray-400">Press Enter after each skill</FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -289,9 +350,14 @@ function CreateJobPage() {
                 name="location"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="uppercase text-white font-bold tracking-wide">LOCATION</FormLabel>
+                    <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">LOCATION <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
                     <FormControl>
-                      <Input className="bg-black text-white border-none placeholder-gray-300 focus:ring-0 focus:border-none" placeholder="e.g., Manila, Philippines" {...field} />
+                      <Input
+                        className={`bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 placeholder-gray-400 ${form.formState.errors.location ? 'border-red-500' : ''}`}
+                        placeholder="e.g., Manila, Philippines"
+                        aria-label="Location input field"
+                        {...field}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -303,28 +369,46 @@ function CreateJobPage() {
                 name="durationDays"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="uppercase text-white font-bold tracking-wide">DURATION (DAYS)</FormLabel>
+                    <div className="flex items-center gap-2">
+                      <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">DURATION (DAYS) <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
+                      <span className="text-xs text-gray-400" title="Maximum duration is 7 days">(max 7)</span>
+                    </div>
                     <FormControl>
                       <Input 
                         type="number" 
                         min={1} 
                         max={7} 
-                        className="bg-black text-white border-none focus:ring-0 focus:border-none" 
+                        className={`bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 w-32 ${form.formState.errors.durationDays ? 'border-red-500' : ''}`} 
                         value={field.value.toString()}
                         onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                        aria-label="Duration in days"
                       />
                     </FormControl>
-                    <FormDescription className="text-gray-400">
-                      Maximum duration is 7 days
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
               />
 
-              <Button type="submit" disabled={isLoading} className="w-full bg-[#ff8800] text-black font-normal py-3 rounded-none hover:bg-[#ff8800] transition-colors uppercase tracking-wide text-lg">
-                {isLoading ? 'Creating...' : 'POST JOB'}
-              </Button>
+              <div className="flex gap-4 mt-8">
+                <Button
+                  type="submit"
+                  disabled={isLoading}
+                  className="flex-1 bg-[#ff8800] text-black font-bold py-3 rounded-lg hover:bg-orange-400 hover:shadow-lg transition-colors uppercase tracking-wide text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#ff8800] focus:ring-offset-2"
+                  aria-label="Post job button"
+                >
+                  {isLoading && <span className="loader border-2 border-t-2 border-t-black border-[#ff8800] rounded-full w-5 h-5 animate-spin" />}
+                  {isLoading ? 'Posting...' : 'POST JOB'}
+                </Button>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="flex-1 border border-gray-600 text-white bg-transparent hover:bg-gray-800 rounded-lg py-3 font-bold uppercase tracking-wide text-lg"
+                  onClick={() => router.push('/jobs')}
+                  aria-label="Cancel job posting"
+                >
+                  Cancel
+                </Button>
+              </div>
             </form>
           </Form>
         </div>
