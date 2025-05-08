@@ -11,6 +11,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMapMarkerAlt, faClock, faTag, faBriefcase, faSearch, faFilter } from '@fortawesome/free-solid-svg-icons'
 import ClientLayout from '../components/ClientLayout'
 import { jobCategories } from "@/lib/constants"
+import LoadingScreen from '@/components/ui/LoadingScreen';
 
 type JobCategory = {
   value: 'digital_design' | 'programming' | 'writing' | 'marketing' | 'manual_labor' | 'tutoring' | 'gardening' | 'carpentry' | 'other'
@@ -142,6 +143,10 @@ export default function JobsPage() {
 
   const handleCategoryChange = (value: string) => {
     setSelectedCategory(value as JobCategory['value'] | 'all')
+  }
+
+  if (loading) {
+    return <LoadingScreen />;
   }
 
   return (

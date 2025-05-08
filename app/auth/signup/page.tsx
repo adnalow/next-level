@@ -27,6 +27,7 @@ import {
 } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { toast } from "sonner"
+import LoadingScreen from '@/components/ui/LoadingScreen'
 
 const formSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -97,6 +98,10 @@ export default function SignUpPage() {
     }
   }
 
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#232526] via-[#414345] to-[#232526] dark:from-[#18181b] dark:via-[#232323] dark:to-[#18181b] transition-colors">
       {/* Branding/logo - centered above form */}
@@ -157,7 +162,7 @@ export default function SignUpPage() {
                           <svg className="ml-2 h-4 w-4 text-gray-400 group-hover:text-[#ff8800] transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-white dark:bg-[#262626] text-gray-900 dark:text-white border-none">
+                      <SelectContent className="bg-white dark:bg-[#262626] text-gray-900 dark:text:white border-none">
                         <SelectItem value="job_seeker" className="hover:bg-gray-100 dark:hover:bg-black focus:bg-gray-100 dark:focus:bg-black">Find Opportunities</SelectItem>
                         <SelectItem value="job_poster" className="hover:bg-gray-100 dark:hover:bg-black focus:bg-gray-100 dark:focus:bg-black">Post Jobs</SelectItem>
                       </SelectContent>

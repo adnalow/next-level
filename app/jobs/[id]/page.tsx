@@ -18,6 +18,7 @@ import { Input } from '@/components/ui/input'
 import { jobCategories } from '@/lib/constants'
 import { Building2, Globe, CalendarDays, Tag, Mail, Clock } from 'lucide-react'
 import ClientLayout from '../../components/ClientLayout'
+import LoadingScreen from '@/components/ui/LoadingScreen'
 
 type Job = {
   id: string
@@ -152,11 +153,7 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
   }
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#222]">
-        <div className="text-center text-white">Loading...</div>
-      </div>
-    )
+    return <LoadingScreen />;
   }
 
   if (!job) {

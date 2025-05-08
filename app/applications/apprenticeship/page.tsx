@@ -9,6 +9,7 @@ import { useSessionContext } from '@/lib/SessionContext'
 import { User } from "lucide-react"
 import ClientLayout from '../../components/ClientLayout';
 import { toast } from "sonner"
+import LoadingScreen from '@/components/ui/LoadingScreen';
 
 export default function ApprenticeshipPage() {
   const [jobs, setJobs] = useState<any[]>([])
@@ -194,7 +195,7 @@ export default function ApprenticeshipPage() {
   })
 
   if (loading) {
-    return <div className="flex min-h-screen items-center justify-center bg-black">Loading...</div>
+    return <LoadingScreen />;
   }
 
   return (

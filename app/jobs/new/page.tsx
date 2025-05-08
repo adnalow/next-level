@@ -11,6 +11,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useSessionContext } from '@/lib/SessionContext'
 import ClientLayout from '../../components/ClientLayout'
 import { toast } from "sonner"
+import LoadingScreen from '@/components/ui/LoadingScreen'
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -178,11 +179,7 @@ function CreateJobPage() {
   }
 
   if (isLoading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-black">
-        <div className="text-center text-white">Loading...</div>
-      </div>
-    )
+    return <LoadingScreen />;
   }
 
   return (

@@ -11,6 +11,7 @@ import { MapPin, Clock, ChevronDown, ChevronUp, CheckCircle2 } from 'lucide-reac
 import ClientLayout from '../components/ClientLayout'
 import { Input } from '@/components/ui/input'
 import { jobCategories } from '@/lib/constants'
+import LoadingScreen from '@/components/ui/LoadingScreen'
 
 type Application = {
   id: string
@@ -196,11 +197,7 @@ export default function ApplicationsPage() {
   }, [filteredJobs])
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-black">
-        <div className="text-center text-white">Loading...</div>
-      </div>
-    )
+    return <LoadingScreen />;
   }
 
   return (

@@ -26,6 +26,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { toast } from "sonner"
+import LoadingScreen from '@/components/ui/LoadingScreen'
 
 const formSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -85,6 +86,10 @@ export default function LoginForm() {
     } finally {
       setIsLoading(false)
     }
+  }
+
+  if (isLoading) {
+    return <LoadingScreen />;
   }
 
   return (

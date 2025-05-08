@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMedal } from '@fortawesome/free-solid-svg-icons'
 import { useSessionContext } from '@/lib/SessionContext'
 import ClientLayout from '../components/ClientLayout'
+import LoadingScreen from '@/components/ui/LoadingScreen'
 
 const JOB_CATEGORIES = [
   { value: 'digital_design', label: 'Digital Design' },
@@ -167,7 +168,7 @@ export default function BadgeShowcasePage() {
           </div>
           {error && <div className="mb-4 text-red-500">{error}</div>}
           {loading ? (
-            <div>Loading...</div>
+            <LoadingScreen />
           ) : filteredBadges.length === 0 ? (
             <div className="text-gray-500">No badges match your filters.</div>
           ) : (
