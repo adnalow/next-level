@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, forwardRef } from 'react'
 import axios from 'axios'
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { useSessionContext } from '@/lib/SessionContext'
@@ -13,6 +13,7 @@ import ClientLayout from '../../components/ClientLayout'
 import { toast } from "sonner"
 import LoadingScreen from '@/components/ui/LoadingScreen'
 import { X } from 'lucide-react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
@@ -56,7 +57,23 @@ type FormOutput = z.output<typeof formSchema>
 export default function NewJobPage() {
   return (
     <ClientLayout>
-      <CreateJobPage />
+      {/* Animate page entry */}
+      <motion.div
+        initial={{ opacity: 0, x: -40 }}
+        animate={{ opacity: 1, x: 0 }}
+        exit={{ opacity: 0, x: 40 }}
+        transition={{ duration: 0.3, ease: 'easeOut' }}
+        className="min-h-screen bg-[#181818] flex flex-col items-center py-0 relative"
+      >
+        {/* Subtle background overlay */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 0.5 }}
+          transition={{ duration: 0.4, delay: 0.1 }}
+          className="absolute inset-0 bg-gradient-to-br from-[#181818] via-[#232323] to-[#181818] pointer-events-none z-0"
+        />
+        <CreateJobPage />
+      </motion.div>
     </ClientLayout>
   );
 }
@@ -111,6 +128,13 @@ function SkillTagsInput({ value, onChange }: { value: string; onChange: (val: st
     </div>
   )
 }
+
+// MotionButton wraps Button for Framer Motion animation support
+const MotionButton = motion(
+  forwardRef(function MotionButton(props: any, ref) {
+    return <Button ref={ref} {...props} />
+  })
+)
 
 function CreateJobPage() {
   const [error, setError] = useState<string | null>(null)
@@ -245,174 +269,271 @@ function CreateJobPage() {
   }
 
   if (isLoading) {
-    return <LoadingScreen />;
+    // Fade out loading spinner when done
+    return (
+      <AnimatePresence>
+        <motion.div
+          key="loading"
+          initial={{ opacity: 1 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
+        >
+          <LoadingScreen />
+        </motion.div>
+      </AnimatePresence>
+    );
   }
 
+  // Animation variants for staggered form fields
+  const formVariants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: 0.12,
+      },
+    },
+  };
+  const fieldVariants = {
+    hidden: { opacity: 0, y: 16 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.25, ease: 'easeOut' } },
+  };
+
   return (
-    <div className="min-h-screen bg-[#181818] flex flex-col items-center py-0">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.25 }}
+      className="min-h-screen w-full flex flex-col items-center py-0 relative z-10"
+    >
       {/* Orange top border */}
-      <div className="w-full h-[2px] bg-[#ff8800] mb-4" />
-      {/* Title and icon left-aligned, responsive */}
-      <div className="w-full max-w-4xl flex flex-col sm:flex-row items-start sm:items-center px-4 sm:px-6 mb-6 gap-2 sm:gap-0">
-        <div className="flex items-center mb-2 sm:mb-0">
+      <motion.div
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: 1 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+        className="w-full h-[2px] bg-[#ff8800] mb-4 origin-left"
+      />
+      {/* Header with drop-down and underline reveal */}
+      <motion.div
+        initial={{ y: -40, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.4, type: 'spring', bounce: 0.35 }}
+        className="w-full max-w-4xl flex flex-col sm:flex-row items-start sm:items-center px-4 sm:px-6 mb-6 gap-2 sm:gap-0"
+      >
+        <div className="flex items-center mb-2 sm:mb-0 relative">
           <svg width="36" height="36" viewBox="0 0 24 24" fill="none" className="mr-3" xmlns="http://www.w3.org/2000/svg">
             <rect x="3" y="7" width="18" height="13" rx="2" fill="none" stroke="#ff8800" strokeWidth="2"/>
             <path d="M16 7V5a4 4 0 0 0-8 0v2" stroke="#ff8800" strokeWidth="2" fill="none"/>
           </svg>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-[#ff8800] uppercase tracking-widest drop-shadow">POST A NEW JOB</h1>
+          <span className="relative">
+            <h1 className="text-3xl sm:text-4xl font-extrabold text-[#ff8800] uppercase tracking-widest drop-shadow">POST A NEW JOB</h1>
+            <motion.div
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: 0.5, delay: 0.2, ease: 'easeOut' }}
+              className="absolute left-0 right-0 -bottom-1 h-1 bg-[#ff8800] rounded origin-left"
+            />
+          </span>
         </div>
-      </div>
+      </motion.div>
       {/* Card */}
       <div className="w-full max-w-4xl px-2 sm:px-6">
-        <div className="w-full bg-[#232323] p-6 sm:p-10 rounded-lg shadow-lg border border-[#222]">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+          className="w-full bg-[#232323] p-6 sm:p-10 rounded-lg shadow-lg border border-[#222]"
+        >
           {error && (
-            <div className="mb-4 rounded-md bg-red-50 p-4 text-red-500">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="mb-4 rounded-md bg-red-50 p-4 text-red-500"
+            >
               {error}
-            </div>
+            </motion.div>
           )}
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="title"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">JOB TITLE <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
-                    <FormControl>
-                      <Input className={`bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 placeholder-gray-400 ${form.formState.errors.title ? 'border-red-500' : ''}`} placeholder="Enter job title, e.g., Logo Design Project" aria-label="Job title input field" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="category"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">CATEGORY <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+            <motion.form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="space-y-6"
+              variants={formVariants}
+              initial="hidden"
+              animate="visible"
+            >
+              {/* Staggered form fields */}
+              <motion.div variants={fieldVariants}>
+                {/* ...existing FormField for title... */}
+                <FormField
+                  control={form.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">JOB TITLE <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
                       <FormControl>
-                        <SelectTrigger className="bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 flex items-center">
-                          <SelectValue placeholder="Select a category" />
-                        </SelectTrigger>
+                        <Input className={`bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 placeholder-gray-400 ${form.formState.errors.title ? 'border-red-500' : ''}`} placeholder="Enter job title, e.g., Logo Design Project" aria-label="Job title input field" {...field} />
                       </FormControl>
-                      <SelectContent className="bg-[#262626] text-white border-none">
-                        {jobCategories.map((category) => (
-                          <SelectItem key={category.value} value={category.value} className="hover:bg-black focus:bg-black">
-                            {category.label}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="description"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">DESCRIPTION <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
-                    <FormControl>
-                      <Textarea 
-                        className={`bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 min-h-[180px] placeholder-gray-400 ${form.formState.errors.description ? 'border-red-500' : ''}`}
-                        placeholder="Describe the job requirements and expectations in detail..." 
-                        aria-label="Job description input field"
-                        {...field} 
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="skillTags"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">REQUIRED SKILLS <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
-                    <FormControl>
-                      <SkillTagsInput value={field.value} onChange={field.onChange} />
-                    </FormControl>
-                    <FormDescription className="text-gray-400">Press Enter after each skill</FormDescription>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="location"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">LOCATION <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
-                    <FormControl>
-                      <Input
-                        className={`bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 placeholder-gray-400 ${form.formState.errors.location ? 'border-red-500' : ''}`}
-                        placeholder="e.g., Manila, Philippines"
-                        aria-label="Location input field"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="durationDays"
-                render={({ field }) => (
-                  <FormItem>
-                    <div className="flex items-center gap-2">
-                      <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">DURATION (DAYS) <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
-                      <span className="text-xs text-gray-400" title="Maximum duration is 7 days">(max 7)</span>
-                    </div>
-                    <FormControl>
-                      <Input 
-                        type="number" 
-                        min={1} 
-                        max={7} 
-                        className={`bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 w-32 ${form.formState.errors.durationDays ? 'border-red-500' : ''}`} 
-                        value={field.value.toString()}
-                        onChange={(e) => field.onChange(e.target.valueAsNumber)}
-                        aria-label="Duration in days"
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <div className="flex gap-4 mt-8">
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="flex-1 bg-[#ff8800] text-black font-bold py-3 rounded-lg hover:bg-orange-400 hover:shadow-lg transition-colors uppercase tracking-wide text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#ff8800] focus:ring-offset-2"
-                  aria-label="Post job button"
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+              <motion.div variants={fieldVariants}>
+                {/* ...existing FormField for category... */}
+                <FormField
+                  control={form.control}
+                  name="category"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">CATEGORY <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
+                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <FormControl>
+                          <SelectTrigger className="bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 flex items-center">
+                            <SelectValue placeholder="Select a category" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="bg-[#262626] text-white border-none">
+                          {jobCategories.map((category) => (
+                            <SelectItem key={category.value} value={category.value} className="hover:bg-black focus:bg-black transition-all duration-200">
+                              {category.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+              <motion.div variants={fieldVariants}>
+                {/* ...existing FormField for description... */}
+                <FormField
+                  control={form.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">DESCRIPTION <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
+                      <FormControl>
+                        <Textarea 
+                          className={`bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 min-h-[180px] placeholder-gray-400 ${form.formState.errors.description ? 'border-red-500' : ''}`}
+                          placeholder="Describe the job requirements and expectations in detail..." 
+                          aria-label="Job description input field"
+                          {...field} 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+              <motion.div variants={fieldVariants}>
+                {/* ...existing FormField for skillTags... */}
+                <FormField
+                  control={form.control}
+                  name="skillTags"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">REQUIRED SKILLS <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
+                      <FormControl>
+                        <SkillTagsInput value={field.value} onChange={field.onChange} />
+                      </FormControl>
+                      <FormDescription className="text-gray-400">Press Enter after each skill</FormDescription>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+              <motion.div variants={fieldVariants}>
+                {/* ...existing FormField for location... */}
+                <FormField
+                  control={form.control}
+                  name="location"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">LOCATION <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
+                      <FormControl>
+                        <Input
+                          className={`bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 placeholder-gray-400 ${form.formState.errors.location ? 'border-red-500' : ''}`}
+                          placeholder="e.g., Manila, Philippines"
+                          aria-label="Location input field"
+                          {...field}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+              <motion.div variants={fieldVariants}>
+                {/* ...existing FormField for durationDays... */}
+                <FormField
+                  control={form.control}
+                  name="durationDays"
+                  render={({ field }) => (
+                    <FormItem>
+                      <div className="flex items-center gap-2">
+                        <FormLabel className="uppercase text-white font-bold tracking-wide flex items-center">DURATION (DAYS) <span className="ml-1 text-[#ff8800]">*</span></FormLabel>
+                        <span className="text-xs text-gray-400" title="Maximum duration is 7 days">(max 7)</span>
+                      </div>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          min={1} 
+                          max={7} 
+                          className={`bg-black text-white border border-gray-700 focus:border-[#ff8800] focus:ring-0 w-32 ${form.formState.errors.durationDays ? 'border-red-500' : ''}`} 
+                          value={field.value.toString()}
+                          onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                          aria-label="Duration in days"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </motion.div>
+              {/* Buttons with bounce and pulse */}
+              <motion.div variants={fieldVariants} className="flex gap-4 mt-8">
+                <motion.div
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 15, delay: 0.2 }}
+                  className="flex-1"
                 >
-                  {isLoading && <span className="loader border-2 border-t-2 border-t-black border-[#ff8800] rounded-full w-5 h-5 animate-spin" />}
-                  {isLoading ? 'Posting...' : 'POST JOB'}
-                </Button>
-                <Button
-                  type="button"
-                  variant="outline"
-                  className="flex-1 border border-gray-600 text-white bg-transparent hover:bg-gray-800 rounded-lg py-3 font-bold uppercase tracking-wide text-lg"
-                  onClick={() => router.push('/jobs')}
-                  aria-label="Cancel job posting"
+                  <MotionButton
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full bg-[#ff8800] text-black font-bold py-3 rounded-lg hover:bg-orange-400 hover:shadow-lg transition-colors uppercase tracking-wide text-lg flex items-center justify-center gap-2 focus:outline-none focus:ring-2 focus:ring-[#ff8800] focus:ring-offset-2 animate-bounce-once"
+                    aria-label="Post job button"
+                    whileHover={{ scale: 1.05, boxShadow: '0 0 0 4px #ff8800aa' }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    {isLoading && <span className="loader border-2 border-t-2 border-t-black border-[#ff8800] rounded-full w-5 h-5 animate-spin" />}
+                    {isLoading ? 'Posting...' : 'POST JOB'}
+                  </MotionButton>
+                </motion.div>
+                <motion.div
+                  initial={{ scale: 0.9 }}
+                  animate={{ scale: 1 }}
+                  transition={{ type: 'spring', stiffness: 400, damping: 15, delay: 0.25 }}
+                  className="flex-1"
                 >
-                  Cancel
-                </Button>
-              </div>
-            </form>
+                  <MotionButton
+                    type="button"
+                    variant="outline"
+                    className="w-full border border-gray-600 text-white bg-transparent hover:bg-gray-800 rounded-lg py-3 font-bold uppercase tracking-wide text-lg"
+                    onClick={() => router.push('/jobs')}
+                    aria-label="Cancel job posting"
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    Cancel
+                  </MotionButton>
+                </motion.div>
+              </motion.div>
+            </motion.form>
           </Form>
-        </div>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   )
 }
