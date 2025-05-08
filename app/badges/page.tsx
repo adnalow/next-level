@@ -10,6 +10,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faMedal } from '@fortawesome/free-solid-svg-icons'
 import { useSessionContext } from '@/lib/SessionContext'
 import ClientLayout from '../components/ClientLayout'
+import LoadingScreen from '@/components/ui/LoadingScreen'
 
 const JOB_CATEGORIES = [
   { value: 'digital_design', label: 'Digital Design' },
@@ -121,18 +122,18 @@ export default function BadgeShowcasePage() {
 
   return (
     <ClientLayout>
-      <div className="min-h-screen bg-[#181818] text-white flex flex-col items-center py-12">
-        <div className="w-full max-w-6xl bg-[#232323] rounded-lg p-8" style={{ boxShadow: 'none' }}>
-          <h1 className="text-3xl font-bold mb-2 flex items-center gap-2 text-[#ff8000]">
-            <FontAwesomeIcon icon={faMedal} className="text-[#ff8000] text-2xl" /> MY BADGES
+      <div className="min-h-screen bg-[#181818] text-white flex flex-col items-center py-6 sm:py-12">
+        <div className="w-full max-w-6xl bg-[#232323] rounded-lg p-4 sm:p-8" style={{ boxShadow: 'none' }}>
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2 flex items-center gap-2 text-[#ff8000]">
+            <FontAwesomeIcon icon={faMedal} className="text-[#ff8000] text-xl sm:text-2xl" /> MY BADGES
           </h1>
-          <p className="mb-8 text-gray-300 text-base">Track your achievements and skills mastery</p>
+          <p className="mb-6 sm:mb-8 text-gray-300 text-base">Track your achievements and skills mastery</p>
           {/* Filters */}
-          <div className="flex flex-wrap gap-4 mb-8 items-end">
-            <div>
+          <div className="flex flex-col sm:flex-row flex-wrap gap-4 mb-8 items-end w-full">
+            <div className="w-full sm:w-auto">
               <label className="block text-xs mb-1 text-gray-400">Type</label>
               <select
-                className="bg-[#181818] border border-[#ff8000] rounded px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-[#ff8000]"
+                className="bg-[#181818] border border-[#ff8000] rounded px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-[#ff8000] w-full min-w-[120px]"
                 value={selectedCategory}
                 onChange={e => setSelectedCategory(e.target.value)}
               >
@@ -142,19 +143,19 @@ export default function BadgeShowcasePage() {
                 ))}
               </select>
             </div>
-            <div>
+            <div className="w-full sm:w-auto">
               <label className="block text-xs mb-1 text-gray-400">Location</label>
               <Input
                 placeholder="Location..."
                 value={locationFilter}
                 onChange={e => setLocationFilter(e.target.value)}
-                className="w-40 bg-[#181818] border border-[#ff8000] text-white focus:outline-none focus:ring-2 focus:ring-[#ff8000]"
+                className="w-full sm:w-40 bg-[#181818] border border-[#ff8000] text-white focus:outline-none focus:ring-2 focus:ring-[#ff8000]"
               />
             </div>
-            <div>
+            <div className="w-full sm:w-auto">
               <label className="block text-xs mb-1 text-gray-400">Date</label>
               <select
-                className="bg-[#181818] border border-[#ff8000] rounded px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-[#ff8000]"
+                className="bg-[#181818] border border-[#ff8000] rounded px-2 py-1 text-white focus:outline-none focus:ring-2 focus:ring-[#ff8000] w-full min-w-[120px]"
                 value={dateFilter}
                 onChange={e => setDateFilter(e.target.value)}
               >
@@ -167,35 +168,35 @@ export default function BadgeShowcasePage() {
           </div>
           {error && <div className="mb-4 text-red-500">{error}</div>}
           {loading ? (
-            <div>Loading...</div>
+            <LoadingScreen />
           ) : filteredBadges.length === 0 ? (
             <div className="text-gray-500">No badges match your filters.</div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8">
               {filteredBadges.map((userBadge) => (
                 <div
                   key={userBadge.id}
-                  className="bg-[#18191b] rounded-xl flex flex-col items-center justify-center p-8 shadow-lg border border-[#232323] hover:border-[#ff8000] transition-colors min-h-[340px] h-full cursor-pointer"
-                  style={{ minHeight: 340 }}
+                  className="bg-[#18191b] rounded-xl flex flex-col items-center justify-center p-6 sm:p-8 shadow-lg border border-[#232323] hover:border-[#ff8000] transition-colors min-h-[320px] sm:min-h-[340px] h-full cursor-pointer"
+                  style={{ minHeight: 320 }}
                   onClick={() => openBadgeModal(userBadge)}
                 >
                   <div className="flex flex-col items-center flex-grow justify-center w-full h-full">
                     {/* Badge SVG in orange circle */}
-                    <div className="w-20 h-20 rounded-full border-2 border-[#ff8000] flex items-center justify-center mb-6">
+                    <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-2 border-[#ff8000] flex items-center justify-center mb-4 sm:mb-6">
                       {userBadge.badge.svg ? (
                         <span
-                          className="w-16 h-16 flex items-center justify-center"
+                          className="w-12 h-12 sm:w-16 sm:h-16 flex items-center justify-center"
                           dangerouslySetInnerHTML={{ __html: userBadge.badge.svg }}
                         />
                       ) : (
-                        <FontAwesomeIcon icon={faMedal} className="text-[#ff8000] text-4xl" />
+                        <FontAwesomeIcon icon={faMedal} className="text-[#ff8000] text-3xl sm:text-4xl" />
                       )}
                     </div>
-                    <span className="text-lg text-white font-bold text-center uppercase mb-6">
+                    <span className="text-base sm:text-lg text-white font-bold text-center uppercase mb-4 sm:mb-6">
                       {userBadge.badge.title}
                     </span>
-                    <span className="text-base text-gray-400 mb-2">Acquisition #{userBadge.acquisition_number}</span>
-                    <span className="text-lg text-[#ff8000] font-bold">{new Date(userBadge.acquired_at).toLocaleDateString()}</span>
+                    <span className="text-sm sm:text-base text-gray-400 mb-1 sm:mb-2">Acquisition #{userBadge.acquisition_number}</span>
+                    <span className="text-base sm:text-lg text-[#ff8000] font-bold">{new Date(userBadge.acquired_at).toLocaleDateString()}</span>
                   </div>
                 </div>
               ))}

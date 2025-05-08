@@ -25,6 +25,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { toast } from "sonner"
+import LoadingScreen from '@/components/ui/LoadingScreen'
 
 const formSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -33,6 +35,7 @@ const formSchema = z.object({
 
 export default function LoginForm() {
   const [error, setError] = useState<string | null>(null)
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
   const searchParams = useSearchParams()
   const supabase = createClientComponentClient()
@@ -47,89 +50,110 @@ export default function LoginForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setError(null)
-
-    const { error: signInError, data: { session } } = await supabase.auth.signInWithPassword({
-      email: values.email,
-      password: values.password,
-    })
-
-    if (signInError) {
-      setError(signInError.message)
-      return
-    }
-
-    if (session) {
-      const { data: profile } = await supabase
-        .from('profiles')
-        .select('role')
-        .eq('user_id', session.user.id)
-        .single()
-
-      // Debug: Log session, email, and user type
-      console.log('LOGIN SUCCESS:', {
-        session,
+    setIsLoading(true)
+    try {
+      const { error: signInError, data: { session } } = await supabase.auth.signInWithPassword({
         email: values.email,
-        userType: profile?.role
+        password: values.password,
       })
 
-      const redirectedFrom = searchParams.get('redirectedFrom')
-      const defaultRedirect = profile?.role === 'job_poster' ? '/jobs/new' : '/jobs'
-      router.push(redirectedFrom || defaultRedirect)
-      router.refresh()
+      if (signInError) {
+        setError(signInError.message)
+        return
+      }
+
+      if (session) {
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('role')
+          .eq('user_id', session.user.id)
+          .single()
+
+        // Debug: Log session, email, and user type
+        console.log('LOGIN SUCCESS:', {
+          session,
+          email: values.email,
+          userType: profile?.role
+        })
+
+        toast(`Login successful! Welcome back, ${values.email}.`)
+
+        const redirectedFrom = searchParams.get('redirectedFrom')
+        const defaultRedirect = profile?.role === 'job_poster' ? '/jobs/new' : '/jobs'
+        router.push(redirectedFrom || defaultRedirect)
+        router.refresh()
+      }
+    } finally {
+      setIsLoading(false)
     }
   }
 
+  if (isLoading) {
+    return <LoadingScreen />;
+  }
+
   return (
-    <div className="min-h-screen bg-[#111010] flex flex-col items-center py-0">
-      {/* Orange top border */}
-      <div className="w-full h-[2px] bg-[#ff8800] mb-4" />
-      <div className="w-full flex-1 flex flex-col items-center justify-center">
-        <div className="w-full max-w-md px-4 flex flex-col items-center justify-center">
-          <div className="w-full bg-[#232323] p-8" style={{boxShadow: 'none', borderRadius: 0}}>
-            <h1 className="text-3xl font-bold text-[#ff8800] uppercase tracking-wide mb-2 text-left">Welcome back</h1>
-            <p className="mb-8 text-gray-300 text-base text-left">Sign in to continue your journey</p>
-            {error && (
-              <div className="mb-4 rounded-md bg-red-900/40 p-3 text-sm text-red-400">
-                {error}
-              </div>
-            )}
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-                <FormField
-                  control={form.control}
-                  name="email"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="uppercase text-white font-bold tracking-wide">Email</FormLabel>
-                      <FormControl>
-                        <Input className="bg-black text-white border-none placeholder-gray-300 focus:ring-0 focus:border-none" placeholder="you@example.com" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="password"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel className="uppercase text-white font-bold tracking-wide">Password</FormLabel>
-                      <FormControl>
-                        <Input type="password" className="bg-black text-white border-none placeholder-gray-300 focus:ring-0 focus:border-none" {...field} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <Button type="submit" className="w-full bg-[#ff8800] text-black font-normal py-3 rounded-none hover:bg-[#ff8800] transition-colors uppercase tracking-wide text-lg">Sign In</Button>
-              </form>
-            </Form>
-            <div className="flex justify-center mt-8">
-              <p className="text-sm text-gray-400">
-                Don't have an account?{' '}
-                <Link href="/auth/signup" className="text-[#ff8800] hover:underline font-bold">Sign Up</Link>
-              </p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#232526] via-[#414345] to-[#232526] dark:from-[#18181b] dark:via-[#232323] dark:to-[#18181b] transition-colors">
+      {/* Branding/logo - centered above form */}
+      <div className="flex flex-col items-center justify-center w-full mt-12 mb-6">
+        <img src="/globe.svg" alt="Logo" className="h-12 w-12 mb-2 mx-auto" />
+        <span className="text-2xl font-bold tracking-wide text-[#ff8800] text-center">NextLevel</span>
+      </div>
+      <div className="w-full max-w-md px-4 sm:px-6 md:px-8 flex flex-col items-center justify-center">
+        <div className="w-full bg-white dark:bg-[#232323] p-8 sm:p-10 md:p-12 shadow-xl rounded-2xl border border-gray-200 dark:border-[#232323] transition-all">
+          <h1 className="text-3xl font-bold text-[#ff8800] uppercase tracking-wide mb-2 text-left">Welcome back</h1>
+          <p className="mb-8 text-gray-600 dark:text-gray-300 text-base text-left">Sign in to continue your journey</p>
+          {error && (
+            <div className="mb-4 rounded-md bg-red-100 dark:bg-red-900/40 p-3 text-sm text-red-600 dark:text-red-400">
+              {error}
             </div>
+          )}
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-7">
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="uppercase text-gray-800 dark:text-white font-bold tracking-wide">Email</FormLabel>
+                    <FormControl>
+                      <Input className="bg-white dark:bg-black text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-md placeholder-gray-400 focus:ring-2 focus:ring-[#ff8800] focus:border-[#ff8800] transition-all" placeholder="Enter your email" autoComplete="email" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="uppercase text-gray-800 dark:text-white font-bold tracking-wide">Password</FormLabel>
+                    <FormControl>
+                      <Input type="password" className="bg-white dark:bg-black text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-md placeholder-gray-400 focus:ring-2 focus:ring-[#ff8800] focus:border-[#ff8800] transition-all" placeholder="Enter your password" autoComplete="current-password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <div className="flex justify-end">
+                <Link href="/auth/forgot-password" className="text-sm text-[#ff8800] hover:underline font-semibold">Forgot Password?</Link>
+              </div>
+              <Button type="submit" disabled={isLoading} className="w-full bg-[#ff8800] text-black font-semibold py-3 rounded-lg shadow-md hover:bg-[#ffa733] hover:shadow-lg hover:scale-[1.03] focus:scale-[1.03] transition-all duration-150 uppercase tracking-wide text-lg focus:outline-none focus:ring-2 focus:ring-[#ff8800] focus:ring-offset-2 border border-[#ff8800]">
+                {isLoading ? (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="animate-spin h-5 w-5 text-black" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path></svg>
+                    Signing In...
+                  </span>
+                ) : 'Sign In'}
+              </Button>
+            </form>
+          </Form>
+          <div className="flex justify-center mt-8">
+            <p className="text-sm font-semibold text-gray-400 dark:text-gray-300">
+              Don't have an account?{' '}
+              <Link href="/auth/signup" className="text-gray-700 dark:text-gray-100 font-bold underline underline-offset-2 hover:text-[#ff8800] transition-colors">Sign Up</Link>
+            </p>
           </div>
         </div>
       </div>
