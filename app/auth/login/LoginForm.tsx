@@ -25,6 +25,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card'
+import { toast } from "sonner"
 
 const formSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -73,6 +74,8 @@ export default function LoginForm() {
           email: values.email,
           userType: profile?.role
         })
+
+        toast(`Login successful! Welcome back, ${values.email}.`)
 
         const redirectedFrom = searchParams.get('redirectedFrom')
         const defaultRedirect = profile?.role === 'job_poster' ? '/jobs/new' : '/jobs'

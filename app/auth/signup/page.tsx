@@ -26,6 +26,7 @@ import {
   CardTitle,
 } from '@/components/ui/card'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { toast } from "sonner"
 
 const formSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -87,6 +88,7 @@ export default function SignUpPage() {
           email,
           userType
         })
+        toast(`Signup successful! Welcome to NextLevel, ${email}.`)
         router.push('/jobs')
         router.refresh()
       }
