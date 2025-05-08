@@ -44,23 +44,57 @@ export default function JobsPage() {
   const [badges, setBadges] = useState<{ [jobId: string]: Badge }>({})
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState('')
+  const [debouncedSearchTerm, setDebouncedSearchTerm] = useState('')
   const [selectedCategory, setSelectedCategory] = useState<JobCategory['value'] | 'all'>('all')
   const [selectedLocation, setSelectedLocation] = useState<string>('all')
   const [locations, setLocations] = useState<string[]>([])
+  const [sortOption, setSortOption] = useState('date_desc')
   const supabase = createClientComponentClient()
   const router = useRouter()
 
+  // Debounce searchTerm
   useEffect(() => {
+    const handler = setTimeout(() => {
+      setDebouncedSearchTerm(searchTerm)
+    }, 400)
+    return () => clearTimeout(handler)
+  }, [searchTerm])
+
+  // Initial load (show LoadingScreen)
+  useEffect(() => {
+    setLoading(true)
     fetchJobs()
   }, [])
 
-  const fetchJobs = async () => {
-    setLoading(true)
+  // Fetch jobs when filters or debounced search change (no LoadingScreen for search)
+  useEffect(() => {
+    // If search is cleared, show all jobs (do not show LoadingScreen)
+    if (debouncedSearchTerm === '' && selectedCategory === 'all' && selectedLocation === 'all' && sortOption === 'date_desc') {
+      fetchJobs(false)
+    } else if (debouncedSearchTerm !== '' || selectedCategory !== 'all' || selectedLocation !== 'all' || sortOption !== 'date_desc') {
+      fetchJobs(false)
+    }
+    // eslint-disable-next-line
+  }, [debouncedSearchTerm, selectedCategory, selectedLocation, sortOption])
+
+  // Update fetchJobs to accept loading param
+  const fetchJobs = async (showLoading = true) => {
+    if (showLoading) setLoading(true)
     let query = supabase
       .from('jobs')
       .select('*')
       .eq('status', 'open')
-      .order('created_at', { ascending: false })
+
+    // Sorting logic
+    if (sortOption === 'date_desc') {
+      query = query.order('created_at', { ascending: false })
+    } else if (sortOption === 'date_asc') {
+      query = query.order('created_at', { ascending: true })
+    } else if (sortOption === 'location_asc') {
+      query = query.order('location', { ascending: true })
+    } else if (sortOption === 'title_asc') {
+      query = query.order('title', { ascending: true })
+    }
 
     if (selectedCategory && selectedCategory !== 'all') {
       query = query.eq('category', selectedCategory)
@@ -70,8 +104,8 @@ export default function JobsPage() {
       query = query.ilike('location', `%${selectedLocation}%`)
     }
 
-    if (searchTerm) {
-      query = query.or(`title.ilike.%${searchTerm}%,description.ilike.%${searchTerm}%`)
+    if (debouncedSearchTerm) {
+      query = query.or(`title.ilike.%${debouncedSearchTerm}%,description.ilike.%${debouncedSearchTerm}%`)
     }
 
     const { data, error } = await query
@@ -113,11 +147,6 @@ export default function JobsPage() {
     setLoading(false)
   }
 
-  // Filter jobs whenever search terms or filters change
-  useEffect(() => {
-    fetchJobs()
-  }, [searchTerm, selectedCategory, selectedLocation])
-
   // Always update locations list based on all jobs, not just filtered jobs
   useEffect(() => {
     const fetchAllLocations = async () => {
@@ -155,43 +184,23 @@ export default function JobsPage() {
         {/* Available Jobs Banner */}
         <div className="w-full flex justify-center">
           <div className="w-full max-w-[1440px] mt-8 mb-8 bg-[#232323] border border-orange-500 rounded-sm p-4 sm:p-6 md:p-8 flex flex-col gap-6 relative" style={{ boxShadow: 'none' }}>
-            <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-4 md:gap-0">
-              <div>
-                <div className="flex items-center gap-3 mb-1">
-                  <FontAwesomeIcon icon={faBriefcase} className="text-2xl text-orange-500" />
-                  <span className="text-2xl font-extrabold text-orange-500 tracking-wide">AVAILABLE JOBS</span>
-                </div>
-                <p className="text-base text-white font-normal mt-1">Find your next micro-apprenticeship opportunity</p>
-              </div>
-              <div className="flex items-center mt-4 md:mt-0">
-                <div className="flex flex-row items-center border-2 border-orange-500 bg-black rounded-sm px-4 sm:px-6 py-3 sm:py-4" style={{ boxShadow: 'none' }}>
-                  <div className="flex items-center justify-center w-10 h-10 sm:w-14 sm:h-14 border-2 border-orange-500 mr-4 sm:mr-6">
-                    <span className="text-orange-500 font-bold text-xl sm:text-2xl">{jobs.length}</span>
-                  </div>
-                  <div className="flex flex-col justify-center">
-                    <span className="text-sm sm:text-base text-gray-400 leading-tight">Jobs available</span>
-                    <span className="text-sm sm:text-base text-white font-bold leading-tight">Ready to apply</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col md:flex-row gap-3 md:gap-4 mt-4 md:mt-6 w-full items-stretch md:items-center">
-              {/* Search Field - full width, black background, uniform height */}
-              <div className="flex items-center bg-black border border-[#222] rounded-none px-3 sm:px-4 h-12 flex-1 min-w-0">
-                <FontAwesomeIcon icon={faSearch} className="text-orange-500 mr-2 text-base" />
+            {/* Move search bar to the top for prominence */}
+            <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-6 w-full items-stretch md:items-center">
+              <div className="flex items-center bg-black border border-[#222] rounded-none px-3 sm:px-4 h-12 flex-1 min-w-0 group focus-within:border-orange-400 transition-all duration-300">
+                <FontAwesomeIcon icon={faSearch} className="text-orange-500 mr-2 text-base transition-transform duration-300 group-focus-within:scale-110 group-focus-within:rotate-12" />
                 <Input
                   placeholder="Search for jobs, skills or keywords..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="bg-transparent border-0 text-white focus:ring-0 placeholder:text-gray-400 h-12 px-0 text-base w-full min-w-0"
+                  className="bg-transparent border-0 text-white focus:ring-0 placeholder:text-gray-400 h-12 px-0 text-base w-full min-w-0 focus:outline-none transition-all duration-300"
                   style={{ boxShadow: 'none', height: '48px', minHeight: '48px', lineHeight: '48px' }}
                 />
               </div>
-              {/* Category Dropdown - match search field style and height */}
+              {/* Category Dropdown with distinct style */}
               <Select value={selectedCategory} onValueChange={handleCategoryChange}>
                 <SelectTrigger
-                  className="w-full md:w-56 h-12 flex items-center px-3 sm:px-4 border border-[#222] rounded-none bg-black text-white text-base font-normal focus:ring-0 focus:outline-none shadow-none min-w-0 mt-2 md:mt-0"
-                  style={{ backgroundColor: '#000', borderRadius: 0, borderColor: '#222', color: '#fff', boxShadow: 'none', height: '48px', minHeight: '48px', lineHeight: '48px' }}
+                  className="w-full md:w-56 h-12 flex items-center px-3 sm:px-4 border-2 border-orange-500 rounded bg-[#181818] text-white text-base font-semibold focus:ring-0 focus:outline-none shadow-none min-w-0 mt-2 md:mt-0"
+                  style={{ backgroundColor: '#181818', borderRadius: 6, borderColor: '#ff9800', color: '#fff', boxShadow: 'none', height: '48px', minHeight: '48px', lineHeight: '48px' }}
                 >
                   <FontAwesomeIcon icon={faFilter} className="text-orange-500 mr-2 text-base" />
                   <SelectValue placeholder="All Categories" />
@@ -203,11 +212,11 @@ export default function JobsPage() {
                   ))}
                 </SelectContent>
               </Select>
-              {/* Location Dropdown - match search field style and height */}
+              {/* Location Dropdown with distinct style */}
               <Select value={selectedLocation} onValueChange={setSelectedLocation}>
                 <SelectTrigger
-                  className="w-full md:w-56 h-12 flex items-center px-3 sm:px-4 border border-[#222] rounded-none bg-black text-white text-base font-normal focus:ring-0 focus:outline-none shadow-none min-w-0 mt-2 md:mt-0"
-                  style={{ backgroundColor: '#000', borderRadius: 0, borderColor: '#222', color: '#fff', boxShadow: 'none', height: '48px', minHeight: '48px', lineHeight: '48px' }}
+                  className="w-full md:w-56 h-12 flex items-center px-3 sm:px-4 border-2 border-orange-500 rounded bg-[#181818] text-white text-base font-semibold focus:ring-0 focus:outline-none shadow-none min-w-0 mt-2 md:mt-0"
+                  style={{ backgroundColor: '#181818', borderRadius: 6, borderColor: '#ff9800', color: '#fff', boxShadow: 'none', height: '48px', minHeight: '48px', lineHeight: '48px' }}
                 >
                   <FontAwesomeIcon icon={faMapMarkerAlt} className="text-orange-500 mr-2 text-base" />
                   <SelectValue placeholder="All Locations" />
@@ -219,10 +228,62 @@ export default function JobsPage() {
                   ))}
                 </SelectContent>
               </Select>
+              {/* Sorting Dropdown */}
+              <Select value={sortOption} onValueChange={setSortOption}>
+                <SelectTrigger
+                  className="w-full md:w-56 h-12 flex items-center px-3 sm:px-4 border-2 border-orange-500 rounded bg-[#181818] text-white text-base font-semibold focus:ring-0 focus:outline-none shadow-none min-w-0 mt-2 md:mt-0"
+                  style={{ backgroundColor: '#181818', borderRadius: 6, borderColor: '#ff9800', color: '#fff', boxShadow: 'none', height: '48px', minHeight: '48px', lineHeight: '48px' }}
+                >
+                  <FontAwesomeIcon icon={faFilter} className="text-orange-500 mr-2 text-base" />
+                  <SelectValue placeholder="Sort by" />
+                </SelectTrigger>
+                <SelectContent className="bg-[#232323] border-orange-500 text-white">
+                  <SelectItem value="date_desc">Date Posted (Newest)</SelectItem>
+                  <SelectItem value="date_asc">Date Posted (Oldest)</SelectItem>
+                  <SelectItem value="location_asc">Location (A-Z)</SelectItem>
+                  <SelectItem value="title_asc">Title (A-Z)</SelectItem>
+                </SelectContent>
+              </Select>
+              {/* Clear Filters Button */}
+              <Button
+                className="h-12 px-5 bg-gradient-to-r from-gray-700 to-orange-500 text-white font-bold rounded border-2 border-orange-500 hover:from-orange-500 hover:to-orange-600 hover:text-black transition-colors mt-2 md:mt-0"
+                onClick={() => {
+                  setSearchTerm('');
+                  setDebouncedSearchTerm('');
+                  setSelectedCategory('all');
+                  setSelectedLocation('all');
+                  setSortOption('date_desc');
+                }}
+                type="button"
+              >
+                Clear Filters
+              </Button>
+            </div>
+            {/* Header and jobs count row below search bar */}
+            <div className="flex flex-col md:flex-row justify-between items-start md:items-center w-full gap-4 md:gap-0">
+              <div>
+                <div className="flex items-center gap-3 mb-1">
+                  <FontAwesomeIcon icon={faBriefcase} className="text-3xl md:text-4xl text-orange-500" />
+                  <span className="text-3xl md:text-4xl font-black text-orange-400 tracking-wider drop-shadow-lg uppercase" style={{ letterSpacing: '0.08em' }}>AVAILABLE JOBS</span>
+                </div>
+                <p className="text-base text-white font-normal mt-1">Find your next micro-apprenticeship opportunity</p>
+              </div>
+              <div className="flex items-center mt-4 md:mt-0">
+                <div className="flex flex-row items-center border-2 border-orange-400 bg-gradient-to-r from-orange-400 to-orange-500 rounded-md px-4 sm:px-6 py-3 sm:py-4 shadow-lg relative overflow-hidden rounded-md">
+                  <div className="absolute -top-2 -left-2 w-14 h-14 rounded-full border-4 border-orange-400 animate-pulse opacity-60 z-0 hidden sm:block"></div>
+                  <div className="flex items-center justify-center w-10 h-10 sm:w-14 sm:h-14 border-2 border-orange-500 bg-black rounded-full mr-4 sm:mr-6 z-10">
+                    <span className="text-orange-500 font-extrabold text-xl sm:text-2xl">{jobs.length}</span>
+                  </div>
+                  <div className="flex flex-col justify-center">
+                    <span className="text-sm sm:text-base text-black font-semibold leading-tight">Jobs available</span>
+                    <span className="text-sm sm:text-base text-white font-extrabold leading-tight tracking-wide">JOBS READY TO APPLY</span>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        {/* Job Cards Grid */}
+        {/* Responsive Job Cards Grid */}
         <div className="w-full flex justify-center">
           <div className="w-full max-w-[1440px] px-1 sm:px-2 md:px-4">
             {loading ? (
@@ -236,25 +297,46 @@ export default function JobsPage() {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
+              <div className="grid gap-8 sm:gap-10 grid-cols-1 md:grid-cols-2 xl:grid-cols-3">
                 {jobs.map((job) => {
                   const maxSkillTags = 3;
                   const visibleTags = job.skill_tags.slice(0, maxSkillTags);
                   const extraTags = job.skill_tags.length - maxSkillTags;
                   return (
-                    <div key={job.id} className="relative bg-[#232323] rounded-md flex flex-col min-h-[370px] p-4 sm:p-7 border-t-4 border-orange-500 shadow-none overflow-visible w-full max-w-full md:max-w-[500px] mx-auto h-full">
+                    <div
+                      key={job.id}
+                      className="relative bg-[#232323] rounded-lg flex flex-col min-h-[370px] p-5 sm:p-8 border-t-4 border-orange-500 shadow-none overflow-visible w-full max-w-full md:max-w-[500px] mx-auto h-full transition-all duration-300 hover:scale-[1.035] hover:shadow-2xl hover:shadow-orange-400/30 hover:bg-orange-500/10 cursor-pointer focus-within:ring-4 focus-within:ring-orange-400 focus-within:ring-opacity-50 animate-fade-in mb-6"
+                      tabIndex={0}
+                      style={{ margin: '12px' }}
+                    >
                       <div className="flex-1 flex flex-col">
                         {/* Title and Badge Row */}
                         <div className="flex items-start justify-between mb-3">
                           <div className="flex-1">
-                            <CardTitle className="text-xl sm:text-2xl font-bold text-white leading-snug text-left mb-2">
+                            <CardTitle className="text-xl sm:text-2xl font-bold text-gray-50 leading-snug text-left mb-2">
                               {job.title}
                             </CardTitle>
                             {/* Top row: status, category, remote */}
-                            <div className="flex flex-wrap gap-2 mb-2">
-                              <span className="inline-block bg-orange-500 text-black text-xs font-bold rounded px-2 py-0.5">OPEN</span>
-                              <span className="inline-block bg-[#444] text-white text-xs rounded px-2 py-0.5 capitalize">{jobCategories.find(c => c.value === job.category)?.label || job.category}</span>
-                              <span className="inline-block bg-[#444] text-white text-xs rounded px-2 py-0.5">Remote</span>
+                            <div className="flex flex-wrap gap-2 mb-2 items-center">
+                              <span className="inline-flex items-center gap-1 bg-orange-500 text-black text-xs font-bold rounded px-2 py-0.5 animate-pulse-slow shadow-orange-400/40 shadow-md">
+                                <span className="inline-block w-2 h-2 rounded-full bg-green-400 animate-pulse"></span>
+                                OPEN
+                              </span>
+                              <span className="inline-block bg-[#444] text-white text-xs rounded px-2 py-0.5 capitalize">
+                                {jobCategories.find(c => c.value === job.category)?.label || job.category}
+                              </span>
+                              {job.location && job.location.trim().toLowerCase() === 'remote' && (
+                                <span className="inline-flex items-center gap-1 bg-blue-600 text-white text-xs font-bold rounded px-2 py-0.5 animate-pulse-slow">
+                                  <FontAwesomeIcon icon={faMapMarkerAlt} className="text-white text-xs" />
+                                  REMOTE
+                                </span>
+                              )}
+                              {job.location && job.location.trim() !== '' && job.location.trim().toLowerCase() !== 'remote' && (
+                                <span className="inline-flex items-center gap-1 bg-gray-700 text-white text-xs font-bold rounded px-2 py-0.5">
+                                  <FontAwesomeIcon icon={faMapMarkerAlt} className="text-white text-xs" />
+                                  {job.location}
+                                </span>
+                              )}
                             </div>
                           </div>
                           {badges[job.id]?.svg && (
@@ -262,20 +344,20 @@ export default function JobsPage() {
                           )}
                         </div>
                         {/* Description */}
-                        <p className="text-sm text-gray-200 mb-4 line-clamp-2 text-left">{job.description}</p>
+                        <p className="text-sm text-gray-100 mb-6 line-clamp-2 text-left">{job.description}</p>
                         {/* Location and Duration Row */}
-                        <div className="flex flex-wrap items-center gap-4 sm:gap-8 text-gray-400 text-sm mb-4">
+                        <div className="flex flex-wrap items-center gap-4 sm:gap-8 text-gray-300 text-sm mb-6">
                           <span className="flex items-center gap-1">
                             <FontAwesomeIcon icon={faMapMarkerAlt} />
-                            {job.location || 'Remote'}
+                            {job.location && job.location.trim() !== '' ? job.location : 'Remote'}
                           </span>
-                          <span className="flex items-center gap-1">
+                          <span className="flex items-center gap-1 font-bold text-orange-400 text-base">
                             <FontAwesomeIcon icon={faClock} />
-                            {job.duration_days} {job.duration_days === 1 ? 'day' : 'days'}
+                            {job.duration_days === 1 ? '1 day' : `${job.duration_days} days`}
                           </span>
                         </div>
                         {/* Skill tags row with border */}
-                        <div className="border-t border-[#444] pt-3 pb-5 flex flex-wrap gap-x-4 gap-y-2 items-center text-gray-400 text-sm">
+                        <div className="border-t border-[#444] pt-4 pb-6 flex flex-wrap gap-x-4 gap-y-2 items-center text-gray-300 text-sm">
                           {visibleTags.map((tag, index) => (
                             <span key={index} className="flex items-center gap-1">
                               <FontAwesomeIcon icon={faTag} />
@@ -288,13 +370,15 @@ export default function JobsPage() {
                         </div>
                       </div>
                       <Button
-                        className="w-full bg-[#2a2a2a] text-white font-bold hover:bg-orange-600 rounded-none h-12 text-base mt-0"
+                        className="group w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white font-bold border-2 border-orange-500 hover:from-orange-600 hover:to-orange-700 hover:text-white rounded-md h-14 text-base mt-2 transition-all duration-200 shadow-md text-center focus:outline-none focus:ring-4 focus:ring-orange-400 focus:ring-opacity-50 transform hover:scale-105 flex items-center justify-center gap-2 animate-pulse-slow"
+                        style={{ minHeight: 56, fontSize: '1.1rem', padding: '0.75rem 0' }}
                         onClick={() => {
                           const cleanId = job.id.toString().trim()
                           router.push(`/jobs/${cleanId}`)
                         }}
                       >
-                        VIEW DETAILS
+                        APPLY NOW
+                        <span className="inline-block transition-all duration-200 transform group-hover:translate-x-1 group-hover:scale-110">→</span>
                       </Button>
                     </div>
                   );
