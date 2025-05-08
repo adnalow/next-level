@@ -19,10 +19,6 @@ const Toaster = ({ ...props }: ToasterProps) => {
           boxShadow: '0 4px 24px 0 rgba(0,0,0,0.25)',
         },
         descriptionClassName: "text-gray-300 font-normal text-sm mt-1",
-        actionButtonClassName: "bg-[#ff8800] text-black font-bold rounded px-3 py-1 ml-2 hover:bg-[#ffa733] transition-colors",
-        cancelButtonClassName: "bg-transparent text-gray-400 border-none hover:text-white ml-2",
-        closeButtonClassName: "text-[#ff8800] hover:text-white ml-2",
-        iconClassName: "text-[#ff8800] w-6 h-6 mr-2",
       }}
       style={{
         zIndex: 9999,

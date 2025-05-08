@@ -15,6 +15,8 @@ export default function ApprenticeshipPage() {
   const [jobs, setJobs] = useState<any[]>([])
   const [apprentices, setApprentices] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
+  const [jobsLoading, setJobsLoading] = useState(true)
+  const [apprenticesLoading, setApprenticesLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [search, setSearch] = useState('')
   const [statusFilter, setStatusFilter] = useState('all')
@@ -29,8 +31,12 @@ export default function ApprenticeshipPage() {
     // eslint-disable-next-line
   }, [sessionLoading, session])
 
+  useEffect(() => {
+    setLoading(jobsLoading || apprenticesLoading)
+  }, [jobsLoading, apprenticesLoading])
+
   const fetchApprenticeships = async () => {
-    setLoading(true)
+    setJobsLoading(true)
     setError(null)
     if (!session) return
     try {
@@ -55,11 +61,11 @@ export default function ApprenticeshipPage() {
     } catch (err: any) {
       setError('Error loading apprenticeships')
     }
-    setLoading(false)
+    setJobsLoading(false)
   }
 
   const fetchApprentices = async () => {
-    setLoading(true)
+    setApprenticesLoading(true)
     setError(null)
     if (!session) return
     try {
@@ -73,7 +79,7 @@ export default function ApprenticeshipPage() {
       const jobTitleMap = Object.fromEntries((jobsData || []).map((job: any) => [job.id, job.title]))
       if (jobIds.length === 0) {
         setApprentices([])
-        setLoading(false)
+        setApprenticesLoading(false)
         return
       }
       // Get all in_progress applications for these jobs, including accepted_at
@@ -106,7 +112,7 @@ export default function ApprenticeshipPage() {
       setError('Error loading apprentices: ' + (err?.message || JSON.stringify(err)))
       console.error('Apprenticeship fetch error:', err)
     }
-    setLoading(false)
+    setApprenticesLoading(false)
   }
 
   // Helper function to get the next acquisition number for a badge
