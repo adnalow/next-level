@@ -58,7 +58,13 @@ export default function LoginForm() {
       })
 
       if (signInError) {
-        setError(signInError.message)
+        // If refresh token error, clear local session and prompt re-login
+        if (signInError.message?.toLowerCase().includes('refresh token')) {
+          await supabase.auth.signOut();
+          setError('Session expired or invalid. Please log in again.');
+        } else {
+          setError(signInError.message)
+        }
         return
       }
 
