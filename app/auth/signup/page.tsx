@@ -140,7 +140,7 @@ export default function SignUpPage() {
                   <FormItem>
                     <FormLabel className="uppercase text-gray-800 dark:text-white font-bold tracking-wide">Password</FormLabel>
                     <FormControl>
-                      <Input type="password" className="bg-white dark:bg-black text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-md placeholder-gray-400 focus:ring-2 focus:ring-[#ff8800] focus:border-[#ff8800] transition-all" placeholder="Enter your password" autoComplete="new-password" {...field} />
+                      <Input type="password" className="bg-white dark:bg-black text-gray-900 dark:text:white border border-gray-300 dark:border-gray-700 rounded-md placeholder-gray-400 focus:ring-2 focus:ring-[#ff8800] focus:border-[#ff8800] transition-all" placeholder="Enter your password" autoComplete="new-password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -159,12 +159,11 @@ export default function SignUpPage() {
                       <FormControl>
                         <SelectTrigger className="bg-white dark:bg-black text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-md focus:ring-2 focus:ring-[#ff8800] focus:border-[#ff8800] transition-all flex items-center justify-between group">
                           <SelectValue placeholder="Select your role" />
-                          <svg className="ml-2 h-4 w-4 text-gray-400 group-hover:text-[#ff8800] transition-colors" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" /></svg>
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-white dark:bg-[#262626] text-gray-900 dark:text:white border-none">
-                        <SelectItem value="job_seeker" className="hover:bg-gray-100 dark:hover:bg-black focus:bg-gray-100 dark:focus:bg-black">Find Opportunities</SelectItem>
-                        <SelectItem value="job_poster" className="hover:bg-gray-100 dark:hover:bg-black focus:bg-gray-100 dark:focus:bg-black">Post Jobs</SelectItem>
+                      <SelectContent className="bg-white dark:bg-neutral-900 text-gray-900 dark:text-white border-none shadow-lg">
+                        <SelectItem value="job_seeker" className="hover:bg-gray-100 dark:hover:bg-neutral-800 focus:bg-gray-100 dark:focus:bg-neutral-800">Find Opportunities</SelectItem>
+                        <SelectItem value="job_poster" className="hover:bg-gray-100 dark:hover:bg-neutral-800 focus:bg-gray-100 dark:focus:bg-neutral-800">Post Jobs</SelectItem>
                       </SelectContent>
                     </Select>
                     <FormMessage />
