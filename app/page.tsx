@@ -7,12 +7,13 @@ import { motion } from 'framer-motion'
 import { NavBarLanding } from '@/components/ui/navbar-landing'
 import About from './components/About'
 import Process from './components/Process'
+import ForWho from './components/ForWho'
 
 export default function HomePage() {
   return (
     <div className="bg-gradient-to-b from-black to-[#111]">
       <NavBarLanding />
-      <section className="h-[calc(100vh-4rem)] flex items-center justify-center relative overflow-hidden">
+      <section id="home" className="h-[calc(100vh-4rem)] flex items-center justify-center relative overflow-hidden">
         {/* Grid Background */}
         <div 
           className="absolute inset-0 opacity-[0.05] pointer-events-none"
@@ -73,6 +74,7 @@ export default function HomePage() {
         </div>      </section>
       <About />
       <Process />
+      <ForWho />
     </div>
   )
 }
