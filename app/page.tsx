@@ -8,30 +8,39 @@ import { NavBarLanding } from '@/components/ui/navbar-landing'
 import About from './components/About'
 import Process from './components/Process'
 import ForWho from './components/ForWho'
+import PixelFooter from '@/components/ui/Footer'
 
 export default function HomePage() {
   return (
-    <div className="bg-gradient-to-b from-black to-[#111]">
+    <div className="bg-gradient-to-b from-black to-[#111] min-h-screen w-full">
       <NavBarLanding />
-      <section id="home" className="h-[calc(100vh-4rem)] flex items-center justify-center relative overflow-hidden">
+      <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-24 sm:pt-0">
         {/* Grid Background */}
         <div 
-          className="absolute inset-0 opacity-[0.05] pointer-events-none"
+          className="absolute inset-0 opacity-[0.05] pointer-events-none z-0"
           style={{
             backgroundImage: 'linear-gradient(#ff8800 1px, transparent 1px), linear-gradient(to right, #ff8800 1px, transparent 1px)',
-            backgroundSize: '30px 30px'
+            backgroundSize: '30px 30px',
+            minHeight: '100vh',
+            width: '100vw',
+            maxWidth: '100%',
+            left: 0,
+            top: 0
           }}
         />
-        
         {/* Radial Gradient */}
         <div 
-          className="absolute inset-0 pointer-events-none"
+          className="absolute inset-0 pointer-events-none z-0"
           style={{
-            background: 'radial-gradient(circle at 50% 50%, rgba(255,136,0,0.03) 0%, rgba(139,92,246,0.02) 50%, rgba(0,0,0,0) 100%)'
+            background: 'radial-gradient(circle at 50% 50%, rgba(255,136,0,0.03) 0%, rgba(139,92,246,0.02) 50%, rgba(0,0,0,0) 100%)',
+            minHeight: '100vh',
+            width: '100vw',
+            maxWidth: '100%',
+            left: 0,
+            top: 0
           }}
         />
-
-        <div className="container mx-auto px-4 sm:px-6 relative">
+        <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <motion.div 
             className="max-w-5xl mx-auto relative"
             initial={{ opacity: 0, y: 20 }}
@@ -39,7 +48,7 @@ export default function HomePage() {
             transition={{ duration: 0.6 }}
           >
             <div className="bg-[#232323] p-[2px] rounded-lg shadow-xl">
-              <div className="bg-[#181818] rounded-lg px-8 py-12 relative">
+              <div className="bg-[#181818] rounded-lg px-4 sm:px-8 py-8 sm:py-12 relative">
                 {/* Corner Decorations */}
                 <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-[#ff8800]/30 rounded-tl-lg"></div>
                 <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-[#ff8800]/30 rounded-br-lg"></div>
@@ -71,10 +80,15 @@ export default function HomePage() {
               </div>
             </div>
           </motion.div>
-        </div>      </section>
+        </div>
+      </section>
+      <div className="py-6 sm:py-12" />
       <About />
+      <div className="py-6 sm:py-12" />
       <Process />
+      <div className="py-6 sm:py-12" />
       <ForWho />
+      <PixelFooter />
     </div>
   )
 }

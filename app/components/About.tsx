@@ -5,8 +5,8 @@ import { Clock, Briefcase, Award } from 'lucide-react'
 
 const About = () => {
   return (
-    <section id="about" className="h-screen flex items-center justify-center relative overflow-hidden">
-      <div className="container mx-auto px-6">
+    <section id="about" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16 sm:pt-0">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
           <h2 className="text-xl md:text-2xl text-white mb-4 text-center">
             WHAT ARE <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff8800] to-[#ffa733]">NEXT LEVEL</span> OPPORTUNITIES?
@@ -25,7 +25,7 @@ const About = () => {
                   </div>
                   <h3 className="text-[#ff8800] text-sm mb-3 font-bold">SHORT-TERM</h3>
                   <p className="text-gray-300">
-                    1-2 week micro-apprenticeships that fit into your schedule.
+                    One week micro-apprenticeships that fit into your schedule.
                   </p>
                 </div>
               </div>

@@ -20,7 +20,7 @@ const Process: React.FC = () => {
       number: 3,
       icon: Briefcase,
       title: "WORK",
-      description: "Complete your 1-2 week project and gain real experience."
+      description: "Complete your one week project and gain real experience."
     },
     {
       number: 4,
@@ -30,15 +30,16 @@ const Process: React.FC = () => {
     }
   ];
 
-  return (    <motion.section 
+  return (
+    <motion.section 
       id="process" 
-      className="relative min-h-screen flex items-center bg-[#181818] border-t border-[#ff8800]/20"
+      className="relative min-h-screen flex items-center bg-[#181818] border-t border-[#ff8800]/20 pt-16 sm:pt-0"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6 }}
     >
-      <div className="container mx-auto px-6">
+      <div className="container mx-auto px-4 sm:px-6">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}

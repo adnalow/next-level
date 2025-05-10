@@ -19,8 +19,8 @@ const businessFeatures = [
 
 const ForWho = () => {
   return (
-    <section id="for-who" className="min-h-screen flex items-center relative bg-transparent">
-      <div className="container mx-auto px-6">
+    <section id="for-who" className="min-h-screen flex items-center relative bg-transparent pt-16 sm:pt-0">
+      <div className="container mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* For Job Seekers */}
           <div className="rounded-lg p-[2px] bg-gradient-to-r from-[#ff8800] via-[#ff8800] to-[#ffa733] group">
@@ -35,8 +35,8 @@ const ForWho = () => {
               <ul className="space-y-4 mb-2">
                 {studentFeatures.map((item, idx) => (
                   <li key={idx} className="flex items-start group/item">
-                    <div className="w-2 h-2 bg-gradient-to-br from-[#ff8800] to-[#ffa733] mt-2 mr-3 shrink-0 rounded-sm group-hover/item:scale-125 transition-transform duration-200"></div>
-                    <span className="text-gray-300 group-hover/item:text-white transition-colors duration-200">{item}</span>
+                    <div className="w-2 h-2 bg-gradient-to-br from-[#ff8800] to-[#ffa733] mt-2 mr-3 shrink-0 rounded-sm group-hover:item:scale-125 transition-transform duration-200"></div>
+                    <span className="text-gray-300 group-hover:item:text-white transition-colors duration-200">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -56,8 +56,8 @@ const ForWho = () => {
               <ul className="space-y-4 mb-2">
                 {businessFeatures.map((item, idx) => (
                   <li key={idx} className="flex items-start group/item">
-                    <div className="w-2 h-2 bg-gradient-to-br from-[#ff8800] to-[#ffa733] mt-2 mr-3 shrink-0 rounded-sm group-hover/item:scale-125 transition-transform duration-200"></div>
-                    <span className="text-gray-300 group-hover/item:text-white transition-colors duration-200">{item}</span>
+                    <div className="w-2 h-2 bg-gradient-to-br from-[#ff8800] to-[#ffa733] mt-2 mr-3 shrink-0 rounded-sm group-hover:item:scale-125 transition-transform duration-200"></div>
+                    <span className="text-gray-300 group-hover:item:text-white transition-colors duration-200">{item}</span>
                   </li>
                 ))}
               </ul>
