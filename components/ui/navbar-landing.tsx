@@ -7,6 +7,14 @@ import { Menu, X } from 'lucide-react'
 export const NavBarLanding = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
+  const scrollToSection = (sectionId: string) => {
+    setIsMenuOpen(false)
+    const element = document.getElementById(sectionId)
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' })
+    }
+  }
+
   return (
     <nav className="glass-effect sticky top-0 z-50 border-b-2 border-[#ff8800]/20">
       <div className="container mx-auto px-4">
@@ -22,24 +30,23 @@ export const NavBarLanding = () => {
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link
-              href="/"
+            <button
+              onClick={() => scrollToSection('about')}
               className="text-white hover:text-[#ff8800] transition-all duration-200 
                        text-xl relative after:content-[''] after:absolute after:bottom-0 after:left-0 
                        after:w-0 after:h-0.5 after:bg-[#ff8800] hover:after:w-full 
                        after:transition-all after:duration-300"
             >
-              HOME
-            </Link>
-            <Link
-              href="#process"
+              ABOUT
+            </button>            <button
+              onClick={() => scrollToSection('process')}
               className="text-white hover:text-[#ff8800] transition-all duration-200 
                        text-xl relative after:content-[''] after:absolute after:bottom-0 after:left-0 
                        after:w-0 after:h-0.5 after:bg-[#ff8800] hover:after:w-full 
                        after:transition-all after:duration-300"
             >
               PROCESS
-            </Link>
+            </button>
             <Link
               href="#join"
               className="text-white hover:text-[#ff8800] transition-all duration-200 
@@ -72,14 +79,13 @@ export const NavBarLanding = () => {
       {isMenuOpen && (
         <div className="md:hidden glass-effect border-t border-[#ff8800]/20 py-4 px-4">
           <div className="flex flex-col space-y-4">
-            <Link
-              href="/"
+            <button
+              onClick={() => scrollToSection('about')}
               className="text-white hover:text-[#ff8800] py-2 text-xl
-                       transition-colors duration-200 w-full hover:bg-black/20 px-4 rounded-md"
-              onClick={() => setIsMenuOpen(false)}
+                       transition-colors duration-200 w-full hover:bg-black/20 px-4 rounded-md text-left"
             >
-              HOME
-            </Link>
+              ABOUT
+            </button>
             <Link
               href="#process"
               className="text-white hover:text-[#ff8800] py-2 text-xl
