@@ -1,4 +1,4 @@
-# 🚀 Next Level Website
+# 🚀 Next Level
 
 **Next Level** is a modern web platform built with **Next.js** that bridges the gap between job seekers, apprentices, and employers. It provides an intuitive interface for managing job listings, applying to apprenticeships, and showcasing earned badges—all within an accessible and responsive environment.
 
