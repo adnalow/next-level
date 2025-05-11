@@ -4,6 +4,7 @@ import "./globals.css";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { SessionProvider } from "@/lib/SessionContext";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -23,6 +24,7 @@ export default function RootLayout({
         <SessionProvider>
           {children}
         </SessionProvider>
+        <Toaster />
       </body>
     </html>
   );

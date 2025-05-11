@@ -8,6 +8,7 @@ import { useForm } from 'react-hook-form'
 import * as z from 'zod'
 import { use } from 'react'
 import { useSessionContext } from '@/lib/SessionContext'
+import { toast } from "sonner"
 
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
@@ -17,6 +18,7 @@ import { Input } from '@/components/ui/input'
 import { jobCategories } from '@/lib/constants'
 import { Building2, Globe, CalendarDays, Tag, Mail, Clock } from 'lucide-react'
 import ClientLayout from '../../components/ClientLayout'
+import LoadingScreen from '@/components/ui/LoadingScreen'
 
 type Job = {
   id: string
@@ -141,6 +143,7 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
         return
       }
 
+      toast(`Application submitted successfully!`)
       router.push('/applications')
     } catch (err) {
       setError('An unexpected error occurred')
@@ -150,11 +153,7 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
   }
 
   if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-[#222]">
-        <div className="text-center text-white">Loading...</div>
-      </div>
-    )
+    return <LoadingScreen />;
   }
 
   if (!job) {
@@ -171,29 +170,25 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
 
   return (
     <ClientLayout>
-      <div className="min-h-screen bg-[#222] flex justify-center px-2">
-        <div className="w-full max-w-4xl mx-auto py-10">
+      <div className="min-h-screen bg-[#222] flex justify-center px-2 sm:px-4 md:px-6">
+        <div className="w-full max-w-4xl mx-auto py-6 sm:py-10">
           <div className="bg-[#222] rounded-lg shadow border border-[#333]">
-            <div className="px-8 pt-8 pb-4 border-b border-orange-500">
-              <div className="flex items-center justify-between">
-                <h1 className="text-3xl font-bold text-orange-500 tracking-wide">
+            <div className="px-4 sm:px-8 pt-6 sm:pt-8 pb-4 border-b border-orange-500">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <h1 className="text-2xl sm:text-3xl font-bold text-orange-500 tracking-wide">
                   {job.title}
                 </h1>
-                <div className="flex flex-col items-end">
+                <div className="flex flex-col items-start sm:items-end">
                   <span className="text-xs text-white/70">Posted on</span>
                   <span className="text-sm font-semibold text-white border border-orange-500 rounded px-2 py-1 mt-1 whitespace-nowrap">
                     {new Date(job.created_at).toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}
                   </span>
                 </div>
               </div>
-              <div className="flex flex-wrap gap-3 mt-4">
-                <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
-                  <Building2 className="w-4 h-4 text-orange-500" />
-                  E-Shop Solutions Inc.
-                </span>
+              <div className="flex flex-wrap gap-2 sm:gap-3 mt-4">
                 <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
                   <Globe className="w-4 h-4 text-orange-500" />
-                  Remote
+                  {job.location}
                 </span>
                 <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
                   <Clock className="w-4 h-4 text-orange-500" />
@@ -202,14 +197,14 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
               </div>
             </div>
 
-            <div className="px-8 py-6 space-y-8">
+            <div className="px-4 sm:px-8 py-6 space-y-8">
               <section>
-                <h2 className="text-lg font-semibold text-orange-500 mb-2 border-l-4 border-orange-500 pl-2">Description</h2>
-                <p className="text-white/90 text-base leading-relaxed">{job.description}</p>
+                <h2 className="text-base sm:text-lg font-semibold text-orange-500 mb-2 border-l-4 border-orange-500 pl-2">Description</h2>
+                <p className="text-white/90 text-base leading-relaxed break-words">{job.description}</p>
               </section>
 
               <section>
-                <h2 className="text-lg font-semibold text-orange-500 mb-2 border-l-4 border-orange-500 pl-2">Skills</h2>
+                <h2 className="text-base sm:text-lg font-semibold text-orange-500 mb-2 border-l-4 border-orange-500 pl-2">Skills</h2>
                 <div className="flex flex-wrap gap-2 mt-2">
                   {job.skill_tags.map((tag, idx) => (
                     <span key={idx} className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
@@ -221,10 +216,10 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
               </section>
 
               {userRole === 'job_seeker' && (
-                <section className="bg-[#181818] border border-orange-500 rounded-lg px-6 py-8 mt-8">
-                  <h2 className="text-xl font-bold text-orange-500 mb-6">APPLY FOR THIS JOB</h2>
+                <section className="bg-[#181818] border border-orange-500 rounded-lg px-2 sm:px-6 py-6 sm:py-8 mt-8">
+                  <h2 className="text-lg sm:text-xl font-bold text-orange-500 mb-4 sm:mb-6">APPLY FOR THIS JOB</h2>
                   <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 sm:space-y-6">
                       <div>
                         <FormField
                           control={form.control}
@@ -234,7 +229,7 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
                               <FormLabel className="text-white">COVER LETTER</FormLabel>
                               <FormControl>
                                 <Textarea
-                                  className="bg-[#222] border border-orange-500 text-white placeholder:text-white/40 min-h-[120px]"
+                                  className="bg-[#222] border border-orange-500 text-white placeholder:text-white/40 min-h-[100px] sm:min-h-[120px]"
                                   placeholder="Tell the job poster why you're the perfect candidate..."
                                   {...field}
                                 />
