@@ -187,12 +187,8 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
               </div>
               <div className="flex flex-wrap gap-2 sm:gap-3 mt-4">
                 <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
-                  <Building2 className="w-4 h-4 text-orange-500" />
-                  E-Shop Solutions Inc.
-                </span>
-                <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
                   <Globe className="w-4 h-4 text-orange-500" />
-                  Remote
+                  {job.location}
                 </span>
                 <span className="inline-flex items-center gap-1 text-xs text-white bg-[#181818] border border-[#333] rounded px-2 py-1">
                   <Clock className="w-4 h-4 text-orange-500" />
