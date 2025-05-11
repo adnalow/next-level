@@ -8,8 +8,8 @@ const About = () => {
     <section id="about" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-16 sm:pt-0">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
-          <h2 className="text-xl md:text-2xl text-white mb-4 text-center">
-            WHAT ARE <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff8800] to-[#ffa733]">NEXT LEVEL</span> OPPORTUNITIES?
+          <h2 className="text-3xl md:text-4xl text-white mb-4 text-center font-bold">
+            WHAT ARE <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff8800] to-[#ffa733] font-bold">NEXT LEVEL</span> OPPORTUNITIES?
           </h2>
           <p className="text-gray-300 text-center mb-12 max-w-2xl mx-auto text-lg">
             Discover the future of career development through our innovative micro-apprenticeship platform
