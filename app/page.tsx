@@ -53,7 +53,7 @@ export default function HomePage() {
                 <div className="absolute top-0 left-0 w-20 h-20 border-t-2 border-l-2 border-[#ff8800]/30 rounded-tl-lg"></div>
                 <div className="absolute bottom-0 right-0 w-20 h-20 border-b-2 border-r-2 border-[#ff8800]/30 rounded-br-lg"></div>
                 
-                <h2 className="text-2xl md:text-4xl text-center mb-6 uppercase tracking-widest font-bold">
+                <h2 className="text-3xl md:text-5xl text-center mb-8 uppercase tracking-widest font-bold">
                   <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ff8800] to-[#ffa733]">
                     Level Up
                   </span>
@@ -61,19 +61,19 @@ export default function HomePage() {
                   <span className="text-white">Your Career</span>
                 </h2>
                 
-                <p className="text-gray-300 text-center max-w-2xl mx-auto mb-10 text-lg">
+                <p className="text-gray-300 text-center max-w-2xl mx-auto mb-12 text-xl">
                   Whether you're looking to explore new careers or find young talent, 
                   Next Level connects you with opportunities that matter.
                 </p>
                 
-                <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
                   <Button
                     asChild
-                    className="group bg-gradient-to-r from-[#ff8800] to-[#ffa733] text-black font-bold px-8 py-6 rounded-lg hover:from-[#ffa733] hover:to-[#ff8800] border-2 border-[#ff8800] hover:shadow-lg hover:scale-[1.02] transition-all duration-200 text-lg uppercase tracking-wide min-w-[200px]"
+                    className="group bg-gradient-to-r from-[#ff8800] to-[#ffa733] text-black font-bold px-10 py-7 rounded-lg hover:from-[#ffa733] hover:to-[#ff8800] border-2 border-[#ff8800] hover:shadow-lg hover:scale-[1.02] transition-all duration-200 text-xl uppercase tracking-wide min-w-[220px]"
                   >
-                    <Link href="/auth/login" className="flex items-center gap-2">
+                    <Link href="/auth/login" className="flex items-center gap-3">
                       <span>Get Started</span>
-                      <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
+                      <ArrowRight className="w-6 h-6 group-hover:translate-x-1.5 transition-transform duration-200" />
                     </Link>
                   </Button>
                 </div>
