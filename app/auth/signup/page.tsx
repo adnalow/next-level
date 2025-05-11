@@ -106,8 +106,14 @@ export default function SignUpPage() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#232526] via-[#414345] to-[#232526] dark:from-[#18181b] dark:via-[#232323] dark:to-[#18181b] transition-colors">
       {/* Branding/logo - centered above form */}
       <div className="flex flex-col items-center justify-center w-full mt-12 mb-6">
-        <img src="/globe.svg" alt="Logo" className="h-12 w-12 mb-2 mx-auto" />
-        <span className="text-2xl font-bold tracking-wide text-[#ff8800] text-center">NextLevel</span>
+        <Link href="/">
+          <img
+            src="/next-logo.png"
+            alt="NextLevel Logo"
+            className="h-25 w-auto max-w-[200px] mb-2 mx-auto drop-shadow-lg object-contain"
+            style={{ maxWidth: '60vw' }}
+          />
+        </Link>
       </div>
       <div className="w-full max-w-md px-4 sm:px-6 md:px-8 flex flex-col items-center justify-center">
         <div className="w-full bg-white dark:bg-[#232323] p-8 sm:p-10 md:p-12 shadow-xl rounded-2xl border border-gray-200 dark:border-[#232323] transition-all">
@@ -140,7 +146,7 @@ export default function SignUpPage() {
                   <FormItem>
                     <FormLabel className="uppercase text-gray-800 dark:text-white font-bold tracking-wide">Password</FormLabel>
                     <FormControl>
-                      <Input type="password" className="bg-white dark:bg-black text-gray-900 dark:text:white border border-gray-300 dark:border-gray-700 rounded-md placeholder-gray-400 focus:ring-2 focus:ring-[#ff8800] focus:border-[#ff8800] transition-all" placeholder="Enter your password" autoComplete="new-password" {...field} />
+                      <Input type="password" className="bg-white dark:bg-black text-gray-900 dark:text-white border border-gray-300 dark:border-gray-700 rounded-md placeholder-gray-400 focus:ring-2 focus:ring-[#ff8800] focus:border-[#ff8800] transition-all" placeholder="Enter your password" autoComplete="new-password" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -161,7 +167,7 @@ export default function SignUpPage() {
                           <SelectValue placeholder="Select your role" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-white dark:bg-neutral-900 text-gray-900 dark:text-white border-none shadow-lg">
+                      <SelectContent className="bg-white dark:bg-neutral-900 text-gray-900 dark:text-white border-none shadow-lg z-50">
                         <SelectItem value="job_seeker" className="hover:bg-gray-100 dark:hover:bg-neutral-800 focus:bg-gray-100 dark:focus:bg-neutral-800">Find Opportunities</SelectItem>
                         <SelectItem value="job_poster" className="hover:bg-gray-100 dark:hover:bg-neutral-800 focus:bg-gray-100 dark:focus:bg-neutral-800">Post Jobs</SelectItem>
                       </SelectContent>

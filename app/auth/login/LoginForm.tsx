@@ -102,8 +102,14 @@ export default function LoginForm() {
     <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#232526] via-[#414345] to-[#232526] dark:from-[#18181b] dark:via-[#232323] dark:to-[#18181b] transition-colors">
       {/* Branding/logo - centered above form */}
       <div className="flex flex-col items-center justify-center w-full mt-12 mb-6">
-        <img src="/globe.svg" alt="Logo" className="h-12 w-12 mb-2 mx-auto" />
-        <span className="text-2xl font-bold tracking-wide text-[#ff8800] text-center">NextLevel</span>
+        <Link href="/">
+          <img
+            src="/next-logo.png"
+            alt="NextLevel Logo"
+            className="h-25 w-auto max-w-[200px] mb-2 mx-auto drop-shadow-lg object-contain"
+            style={{ maxWidth: '60vw' }}
+          />
+        </Link>
       </div>
       <div className="w-full max-w-md px-4 sm:px-6 md:px-8 flex flex-col items-center justify-center">
         <div className="w-full bg-white dark:bg-[#232323] p-8 sm:p-10 md:p-12 shadow-xl rounded-2xl border border-gray-200 dark:border-[#232323] transition-all">
@@ -142,9 +148,6 @@ export default function LoginForm() {
                   </FormItem>
                 )}
               />
-              <div className="flex justify-end">
-                <Link href="/auth/forgot-password" className="text-sm text-[#ff8800] hover:underline font-semibold">Forgot Password?</Link>
-              </div>
               <Button type="submit" disabled={isLoading} className="w-full bg-[#ff8800] text-black font-semibold py-3 rounded-lg shadow-md hover:bg-[#ffa733] hover:shadow-lg hover:scale-[1.03] focus:scale-[1.03] transition-all duration-150 uppercase tracking-wide text-lg focus:outline-none focus:ring-2 focus:ring-[#ff8800] focus:ring-offset-2 border border-[#ff8800]">
                 {isLoading ? (
                   <span className="flex items-center justify-center gap-2">
