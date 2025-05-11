@@ -9,11 +9,13 @@ const PixelFooter: React.FC = () => {
         <div className="flex flex-col md:flex-row justify-center items-start gap-16 mb-10 w-full">
           {/* About Section */}
           <div className="flex flex-col items-start justify-center max-w-md">
-            <h3 className="font-bold text-2xl md:text-3xl text-[#ff8800] tracking-widest mb-4 font-sans uppercase drop-shadow-lg">
-              NEXT LEVEL
-            </h3>
+            <img
+              src="/next-logo.png"
+              alt="Next Level Logo"
+              className="h-16 md:h-20 w-auto mb-4 drop-shadow-lg"
+            />
             <p className="text-gray-400 text-base md:text-lg leading-relaxed font-sans mb-4">
-              Connecting students with short-term job opportunities through our
+              Connecting individuals with short-term job opportunities through our
               micro-apprenticeship platform.
             </p>
           </div>
