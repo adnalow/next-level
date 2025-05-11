@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
+import Image from 'next/image'
 
 export const NavBarLanding = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -20,9 +21,8 @@ export const NavBarLanding = () => {
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center group cursor-default">
-            <div className="h-8 w-8 bg-gradient-to-br from-[#ff8800] to-[#ffa733] mr-3 rounded-md \
-                          group-hover:animate-pulse transition-all duration-300"></div>
+          <div className="flex items-center group cursor-default space-x-1.5">
+            <Image src="/next-icon.png" alt="Next Level Icon" width={36} height={36} className="w-9 h-9" />
             <span className="font-bold text-white text-2xl md:text-3xl group-hover:text-[#ff8800] transition-colors duration-300">
               NEXT LEVEL
             </span>
@@ -35,8 +35,8 @@ export const NavBarLanding = () => {
                 setIsMenuOpen(false);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="text-white hover:text-[#ff8800] transition-all duration-200 
-                       text-xl relative after:content-[''] after:absolute after:bottom-0 after:left-0 
+              className="text-white font-bold hover:text-[#ff8800] transition-all duration-200 
+                       text-l relative after:content-[''] after:absolute after:bottom-0 after:left-0 
                        after:w-0 after:h-0.5 after:bg-[#ff8800] hover:after:w-full 
                        after:transition-all after:duration-300"
             >
@@ -44,16 +44,16 @@ export const NavBarLanding = () => {
             </button>
             <button
               onClick={() => scrollToSection('about')}
-              className="text-white hover:text-[#ff8800] transition-all duration-200 
-                       text-xl relative after:content-[''] after:absolute after:bottom-0 after:left-0 
+              className="text-white font-bold hover:text-[#ff8800] transition-all duration-200 
+                       text-l relative after:content-[''] after:absolute after:bottom-0 after:left-0 
                        after:w-0 after:h-0.5 after:bg-[#ff8800] hover:after:w-full 
                        after:transition-all after:duration-300"
             >
               ABOUT
             </button>            <button
               onClick={() => scrollToSection('process')}
-              className="text-white hover:text-[#ff8800] transition-all duration-200 
-                       text-xl relative after:content-[''] after:absolute after:bottom-0 after:left-0 
+              className="text-white font-bold hover:text-[#ff8800] transition-all duration-200 
+                       text-l relative after:content-[''] after:absolute after:bottom-0 after:left-0 
                        after:w-0 after:h-0.5 after:bg-[#ff8800] hover:after:w-full 
                        after:transition-all after:duration-300"
             >
@@ -61,8 +61,8 @@ export const NavBarLanding = () => {
             </button>
             <button
               onClick={() => scrollToSection('for-who')}
-              className="text-white hover:text-[#ff8800] transition-all duration-200 \
-                       text-xl relative after:content-[''] after:absolute after:bottom-0 after:left-0 \
+              className="text-white font-bold hover:text-[#ff8800] transition-all duration-200 \
+                       text-l relative after:content-[''] after:absolute after:bottom-0 after:left-0 \
                        after:w-0 after:h-0.5 after:bg-[#ff8800] hover:after:w-full \
                        after:transition-all after:duration-300"
             >
@@ -128,7 +128,7 @@ export const NavBarLanding = () => {
                        hover:from-[#ffa733] hover:to-[#ff8800] transition-all duration-200 text-xl text-center"
               onClick={() => setIsMenuOpen(false)}
             >
-              START
+              START 
             </Link>
           </div>
         </div>

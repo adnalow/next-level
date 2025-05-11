@@ -7,7 +7,7 @@ import { Card, CardContent, CardTitle, CardDescription } from '@/components/ui/c
 import { Input } from '@/components/ui/input'
 import { Select } from '@/components/ui/select'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faMedal } from '@fortawesome/free-solid-svg-icons'
+import { faMedal, faMapMarkerAlt, faClock, faTag, faBriefcase } from '@fortawesome/free-solid-svg-icons'
 import { useSessionContext } from '@/lib/SessionContext'
 import ClientLayout from '../components/ClientLayout'
 import LoadingScreen from '@/components/ui/LoadingScreen'
@@ -52,8 +52,9 @@ export default function BadgeShowcasePage() {
   const [error, setError] = useState<string | null>(null)
   const [selectedBadge, setSelectedBadge] = useState<UserBadge | null>(null)
   const [selectedCategory, setSelectedCategory] = useState<string>('all')
-  const [locationFilter, setLocationFilter] = useState('')
   const [dateFilter, setDateFilter] = useState('') // yyyy-mm
+  const [jobInfo, setJobInfo] = useState<any | null>(null)
+  const [jobLoading, setJobLoading] = useState(false)
   const supabase = createClientComponentClient()
   const router = useRouter()
 
@@ -103,8 +104,6 @@ export default function BadgeShowcasePage() {
     const badge = userBadge.badge
     // Category filter
     if (selectedCategory !== 'all' && badge.category !== selectedCategory) return false
-    // Location filter (case-insensitive substring)
-    if (locationFilter && (!badge.location || !badge.location.toLowerCase().includes(locationFilter.toLowerCase()))) return false
     // Date filter (yyyy-mm)
     if (dateFilter) {
       const acquired = userBadge.acquired_at.slice(0, 7)
@@ -126,13 +125,28 @@ export default function BadgeShowcasePage() {
   }
 
   // Modal open/close handlers
-  const openBadgeModal = (badge: UserBadge) => setSelectedBadge(badge)
-  const closeBadgeModal = () => setSelectedBadge(null)
+  const openBadgeModal = async (badge: UserBadge) => {
+    setSelectedBadge(badge)
+    setJobInfo(null)
+    if (badge.badge.job_id) {
+      setJobLoading(true)
+      const { data, error } = await supabase
+        .from('jobs')
+        .select('*')
+        .eq('id', badge.badge.job_id)
+        .single()
+      setJobInfo(data || null)
+      setJobLoading(false)
+    }
+  }
+  const closeBadgeModal = () => {
+    setSelectedBadge(null)
+    setJobInfo(null)
+  }
 
   // Clear filters handler
   const clearFilters = () => {
     setSelectedCategory('all');
-    setLocationFilter('');
     setDateFilter('');
   }
 
@@ -167,16 +181,7 @@ export default function BadgeShowcasePage() {
               </select>
               <span className="pointer-events-none absolute right-2 top-7 text-[#ff8000]">▼</span>
             </div>
-            <div className="w-full sm:w-auto relative">
-              <label className="block text-xs mb-1 text-gray-400">Location</label>
-              <Input
-                placeholder="Enter a location (e.g., New York)"
-                value={locationFilter}
-                onChange={e => setLocationFilter(e.target.value)}
-                className="w-full sm:w-40 bg-[#181818] border border-[#ff8000] text-white focus:outline-none focus:ring-2 focus:ring-[#ff8000] pr-8 hover:border-[#ffa040] transition-colors"
-                aria-label="Filter by location"
-              />
-            </div>
+            {/* Location filter removed */}
             <div className="w-full sm:w-auto relative">
               <label className="block text-xs mb-1 text-gray-400">Date</label>
               <select
@@ -322,6 +327,39 @@ export default function BadgeShowcasePage() {
                   Acquired: <span className="text-[#ff8000] font-bold">{new Date(selectedBadge.acquired_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                 </div>
               </div>
+              {/* --- JOB INFO SECTION --- */}
+              <div className="w-full mt-6">
+                <h3 className="text-lg font-bold text-[#ff8000] mb-2 flex items-center gap-2">
+                  <FontAwesomeIcon icon={faBriefcase} className="text-[#ff8000]" /> Job Details
+                </h3>
+                {jobLoading ? (
+                  <div className="text-gray-400 text-sm mb-2">Loading job info...</div>
+                ) : jobInfo ? (
+                  <div className="bg-[#181818] rounded-lg p-4 border border-[#393939] text-white text-sm space-y-2">
+                    <div className="font-bold text-base text-[#ffb347] mb-1">{jobInfo.title}</div>
+                    <div className="flex flex-wrap gap-3 mb-1">
+                      <span className="inline-flex items-center gap-1 bg-[#444] text-white text-xs rounded px-2 py-0.5 capitalize">
+                        <FontAwesomeIcon icon={faTag} className="text-[#ff8000]" />
+                        {JOB_CATEGORIES.find(c => c.value === jobInfo.category)?.label || jobInfo.category}
+                      </span>
+                      <span className="inline-flex items-center gap-1 bg-gray-700 text-white text-xs rounded px-2 py-0.5">
+                        <FontAwesomeIcon icon={faMapMarkerAlt} className="text-[#ff8000]" />
+                        {jobInfo.location || 'Remote'}
+                      </span>
+                      <span className="inline-flex items-center gap-1 bg-[#232323] text-orange-400 text-xs rounded px-2 py-0.5">
+                        <FontAwesomeIcon icon={faClock} className="text-[#ff8000]" />
+                        {jobInfo.duration_days} {jobInfo.duration_days === 1 ? 'day' : 'days'}
+                      </span>
+                    </div>
+                    <div className="text-white/90 text-sm leading-relaxed break-words mb-1">
+                      {jobInfo.description}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="text-gray-400 text-sm">No job info found.</div>
+                )}
+              </div>
+              {/* --- END JOB INFO SECTION --- */}
             </div>
           </div>
         )}

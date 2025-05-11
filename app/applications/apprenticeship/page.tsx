@@ -229,16 +229,6 @@ export default function ApprenticeshipPage() {
               onChange={e => setSearch(e.target.value)}
               aria-label="Search apprenticeships by job title or email"
             />
-            <select
-              className="w-full sm:w-48 px-4 py-2 rounded-md border border-[#ff8800] bg-[#181818] text-white focus:outline-none focus:ring-2 focus:ring-[#ff8800]"
-              value={statusFilter}
-              onChange={e => setStatusFilter(e.target.value)}
-              aria-label="Filter apprenticeships by status"
-            >
-              <option value="all">All Statuses</option>
-              <option value="in_progress">In Progress</option>
-              <option value="completed">Completed</option>
-            </select>
           </div>
           {apprentices.length > 0 ? (
             <div className="flex flex-col gap-8">
