@@ -1,36 +1,79 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 🚀 Next Level Website
 
-## Getting Started
+**Next Level** is a modern web platform built with **Next.js** that bridges the gap between job seekers, apprentices, and employers. It provides an intuitive interface for managing job listings, applying to apprenticeships, and showcasing earned badges—all within an accessible and responsive environment.
 
-First, run the development server:
+---
+
+## 🌟 Features
+
+- 🧾 **Job Listings** – Browse job opportunities with detailed descriptions  
+- 🎓 **Apprenticeship Management** – Apply to and manage short-term apprenticeship programs  
+- 🔐 **User Authentication** – Secure login and registration powered by Supabase  
+- 🏅 **Badge Generation** – Automatically generate and display user achievement badges  
+- 📱 **Responsive Design** – Optimized for all screen sizes  
+- ♿ **Accessible UI** – Built with accessibility best practices  
+- 🧩 **Custom Components** – Reusable components crafted with Tailwind CSS and TypeScript
+
+---
+
+## 🛠️ Tech Stack
+
+| Tech           | Purpose                                |
+|----------------|----------------------------------------|
+| [Next.js](https://nextjs.org/)     | React framework for full-stack features |
+| TypeScript     | Type safety and improved developer experience |
+| Tailwind CSS   | Utility-first CSS for rapid UI development |
+| Supabase       | Backend services: database and authentication |
+| Custom UI      | Modular and accessible interface components |
+
+---
+
+## 🚀 Getting Started
+
+### 1. Clone the Repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
+git clone https://github.com/your-org/next-level-website.git
+cd next-level-website
+````
+
+### 2. Install Dependencies
+
+Choose your preferred package manager:
+
+```bash
+npm install      # or
+yarn install     # or
+pnpm install     # or
+bun install
+```
+
+### 3. Run the Development Server
+
+```bash
+npm run dev      # or
+yarn dev         # or
+pnpm dev         # or
 bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open your browser and navigate to:
+👉 [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🙏 Acknowledgements
 
-## Learn More
+Special thanks to the open-source community and contributors whose tools and libraries made this project possible—including the teams behind **Next.js**, **Supabase**, **Tailwind CSS**, and many more.
 
-To learn more about Next.js, take a look at the following resources:
+---
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 👥 Contributors
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+* [Angelica Canandang](https://github.com/aicafiles)
+* [Boris Hernandez](https://github.com/BorisHer)
+* [Reinier Adrian Luna](https://github.com/adnalow)
+* [Justin Mae Nunez](https://github.com/jstnnz)
+* [Kent Melard Pagcaliuangan](https://github.com/iZilchi)
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
