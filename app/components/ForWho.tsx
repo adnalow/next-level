@@ -29,14 +29,14 @@ const ForWho = () => {
               <div className="w-12 h-12 bg-gradient-to-br from-[#ff8800] to-[#ffa733] rounded-lg flex justify-center items-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <GraduationCap className="w-6 h-6 text-black" />
               </div>
-              <h2 className="font-mono text-lg md:text-xl mb-6 text-transparent bg-clip-text bg-gradient-to-r from-[#ff8800] to-[#ffa733] uppercase tracking-wider font-bold">
+              <h2 className="font-mono text-2xl md:text-3xl mb-8 text-transparent bg-clip-text bg-gradient-to-r from-[#ff8800] to-[#ffa733] uppercase tracking-wider font-bold">
                 FOR JOB SEEKERS
               </h2>
-              <ul className="space-y-4 mb-2">
+              <ul className="space-y-6 mb-4">
                 {studentFeatures.map((item, idx) => (
                   <li key={idx} className="flex items-start group/item">
                     <div className="w-2 h-2 bg-gradient-to-br from-[#ff8800] to-[#ffa733] mt-2 mr-3 shrink-0 rounded-sm group-hover:item:scale-125 transition-transform duration-200"></div>
-                    <span className="text-gray-300 group-hover:item:text-white transition-colors duration-200">{item}</span>
+                    <span className="text-gray-300 text-lg group-hover:item:text-white transition-colors duration-200">{item}</span>
                   </li>
                 ))}
               </ul>
@@ -50,14 +50,14 @@ const ForWho = () => {
               <div className="w-12 h-12 bg-gradient-to-br from-[#ff8800] to-[#ffa733] rounded-lg flex justify-center items-center mb-6 group-hover:scale-110 transition-transform duration-300">
                 <Building2 className="w-6 h-6 text-black" />
               </div>
-              <h2 className="font-mono text-lg md:text-xl mb-6 text-transparent bg-clip-text bg-gradient-to-r from-[#ff8800] to-[#ffa733] uppercase tracking-wider font-bold">
+              <h2 className="font-mono text-2xl md:text-3xl mb-8 text-transparent bg-clip-text bg-gradient-to-r from-[#ff8800] to-[#ffa733] uppercase tracking-wider font-bold">
                 FOR BUSINESSES
               </h2>
-              <ul className="space-y-4 mb-2">
+              <ul className="space-y-6 mb-4">
                 {businessFeatures.map((item, idx) => (
                   <li key={idx} className="flex items-start group/item">
                     <div className="w-2 h-2 bg-gradient-to-br from-[#ff8800] to-[#ffa733] mt-2 mr-3 shrink-0 rounded-sm group-hover:item:scale-125 transition-transform duration-200"></div>
-                    <span className="text-gray-300 group-hover:item:text-white transition-colors duration-200">{item}</span>
+                    <span className="text-gray-300 text-lg group-hover:item:text-white transition-colors duration-200">{item}</span>
                   </li>
                 ))}
               </ul>

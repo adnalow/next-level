@@ -47,10 +47,10 @@ const Process: React.FC = () => {
           transition={{ duration: 0.6 }}
           className="text-center mb-16"
         >
-          <h2 className="text-3xl text-white mb-4 font-extrabold tracking-wider">
+          <h2 className="text-4xl text-white mb-6 font-extrabold tracking-wider">
             HOW IT <span className="text-[#FF8000]">WORKS</span>
           </h2>
-          <p className="text-gray-300 text-lg">
+          <p className="text-gray-300 text-2xl">
             Get started with Next Level in four simple steps
           </p>
         </motion.div>
@@ -91,10 +91,10 @@ const Process: React.FC = () => {
                 }}
                 transition={{ duration: 0.2 }}
               >
-                <h3 className="text-[#FF8000] text-lg mb-3 font-bold tracking-wide">
+                <h3 className="text-[#FF8000] text-xl mb-4 font-bold tracking-wide">
                   {step.title}
                 </h3>
-                <p className="text-gray-300 text-sm leading-relaxed">
+                <p className="text-gray-300 text-lg leading-relaxed">
                   {step.description}
                 </p>
               </motion.div>
