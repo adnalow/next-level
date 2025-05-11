@@ -18,6 +18,7 @@ import {
   DropdownMenuItem
 } from './dropdown-menu'
 import LoadingScreen from './LoadingScreen'
+import Image from 'next/image'
 
 export function NavbarWrapper() {
   const { session, loading } = useSessionContext();
@@ -65,11 +66,12 @@ export function Navbar() {
     <nav className="w-full bg-black border-b border-orange-500 sticky top-0 z-30 animate-navbar-fade-in">
       <div className="max-w-screen-2xl mx-auto flex flex-wrap items-center h-auto min-h-16 px-2 sm:px-6 relative">
         {/* Logo */}
-        <div className="flex-shrink-0 py-3">
-          <Link href="/jobs" className="text-xl font-bold tracking-widest text-orange-500 uppercase mr-4 sm:mr-12" style={{ letterSpacing: '0.1em' }}>
-            NEXT LEVEL
-          </Link>
-        </div>
+        <div className="flex items-center group cursor-default space-x-1.5">
+                    <Image src="/next-icon.png" alt="Next Level Icon" width={36} height={36} className="w-9 h-9" />
+                    <span className="font-bold text-white text-2xl md:text-3xl group-hover:text-[#ff8800] transition-colors duration-300">
+                      NEXT LEVEL
+                    </span>
+                  </div>
         {/* Hamburger Icon for Mobile (now at 828px breakpoint) */}
         <button
           className="max-[838px]:block hidden ml-auto text-orange-500 focus:outline-none z-20"

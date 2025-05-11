@@ -35,8 +35,8 @@ export const NavBarLanding = () => {
                 setIsMenuOpen(false);
                 window.scrollTo({ top: 0, behavior: 'smooth' });
               }}
-              className="text-white hover:text-[#ff8800] transition-all duration-200 
-                       text-xl relative after:content-[''] after:absolute after:bottom-0 after:left-0 
+              className="text-white font-bold hover:text-[#ff8800] transition-all duration-200 
+                       text-l relative after:content-[''] after:absolute after:bottom-0 after:left-0 
                        after:w-0 after:h-0.5 after:bg-[#ff8800] hover:after:w-full 
                        after:transition-all after:duration-300"
             >
@@ -44,16 +44,16 @@ export const NavBarLanding = () => {
             </button>
             <button
               onClick={() => scrollToSection('about')}
-              className="text-white hover:text-[#ff8800] transition-all duration-200 
-                       text-xl relative after:content-[''] after:absolute after:bottom-0 after:left-0 
+              className="text-white font-bold hover:text-[#ff8800] transition-all duration-200 
+                       text-l relative after:content-[''] after:absolute after:bottom-0 after:left-0 
                        after:w-0 after:h-0.5 after:bg-[#ff8800] hover:after:w-full 
                        after:transition-all after:duration-300"
             >
               ABOUT
             </button>            <button
               onClick={() => scrollToSection('process')}
-              className="text-white hover:text-[#ff8800] transition-all duration-200 
-                       text-xl relative after:content-[''] after:absolute after:bottom-0 after:left-0 
+              className="text-white font-bold hover:text-[#ff8800] transition-all duration-200 
+                       text-l relative after:content-[''] after:absolute after:bottom-0 after:left-0 
                        after:w-0 after:h-0.5 after:bg-[#ff8800] hover:after:w-full 
                        after:transition-all after:duration-300"
             >
@@ -61,8 +61,8 @@ export const NavBarLanding = () => {
             </button>
             <button
               onClick={() => scrollToSection('for-who')}
-              className="text-white hover:text-[#ff8800] transition-all duration-200 \
-                       text-xl relative after:content-[''] after:absolute after:bottom-0 after:left-0 \
+              className="text-white font-bold hover:text-[#ff8800] transition-all duration-200 \
+                       text-l relative after:content-[''] after:absolute after:bottom-0 after:left-0 \
                        after:w-0 after:h-0.5 after:bg-[#ff8800] hover:after:w-full \
                        after:transition-all after:duration-300"
             >
