@@ -12,34 +12,9 @@ import PixelFooter from '@/components/ui/Footer'
 
 export default function HomePage() {
   return (
-    <div className="bg-gradient-to-b from-black to-[#111] min-h-screen w-full">
+    <div className="min-h-screen w-full">
       <NavBarLanding />
       <section id="home" className="min-h-screen flex items-center justify-center relative overflow-hidden pt-24 sm:pt-0">
-        {/* Grid Background */}
-        <div 
-          className="absolute inset-0 opacity-[0.05] pointer-events-none z-0"
-          style={{
-            backgroundImage: 'linear-gradient(#ff8800 1px, transparent 1px), linear-gradient(to right, #ff8800 1px, transparent 1px)',
-            backgroundSize: '30px 30px',
-            minHeight: '100vh',
-            width: '100vw',
-            maxWidth: '100%',
-            left: 0,
-            top: 0
-          }}
-        />
-        {/* Radial Gradient */}
-        <div 
-          className="absolute inset-0 pointer-events-none z-0"
-          style={{
-            background: 'radial-gradient(circle at 50% 50%, rgba(255,136,0,0.03) 0%, rgba(139,92,246,0.02) 50%, rgba(0,0,0,0) 100%)',
-            minHeight: '100vh',
-            width: '100vw',
-            maxWidth: '100%',
-            left: 0,
-            top: 0
-          }}
-        />
         <div className="container mx-auto px-4 sm:px-6 relative z-10">
           <motion.div 
             className="max-w-5xl mx-auto relative"

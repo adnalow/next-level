@@ -170,7 +170,7 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
 
   return (
     <ClientLayout>
-      <div className="min-h-screen bg-[#222] flex justify-center px-2 sm:px-4 md:px-6">
+      <div className="min-h-screen flex justify-center px-2 sm:px-4 md:px-6">
         <div className="w-full max-w-4xl mx-auto py-6 sm:py-10">
           <div className="bg-[#222] rounded-lg shadow border border-[#333]">
             <div className="px-4 sm:px-8 pt-6 sm:pt-8 pb-4 border-b border-orange-500">

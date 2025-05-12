@@ -63,15 +63,8 @@ export default function NewJobPage() {
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: 40 }}
         transition={{ duration: 0.3, ease: 'easeOut' }}
-        className="min-h-screen bg-[#181818] flex flex-col items-center py-0 relative"
+        className="min-h-screen flex flex-col items-center py-0 relative"
       >
-        {/* Subtle background overlay */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 0.5 }}
-          transition={{ duration: 0.4, delay: 0.1 }}
-          className="absolute inset-0 bg-gradient-to-br from-[#181818] via-[#232323] to-[#181818] pointer-events-none z-0"
-        />
         <CreateJobPage />
       </motion.div>
     </ClientLayout>

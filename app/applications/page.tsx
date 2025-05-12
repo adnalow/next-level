@@ -228,7 +228,7 @@ export default function ApplicationsPage() {
 
   return (
     <ClientLayout>
-      <div className="min-h-screen bg-black px-2 sm:px-4 py-6 sm:py-10">
+      <div className="min-h-screen px-2 sm:px-4 py-6 sm:py-10">
         <div className="max-w-7xl mx-auto w-full">
           <h1 className="text-2xl sm:text-4xl font-bold text-[#ff8000] mb-6 sm:mb-10 tracking-wide uppercase" style={{letterSpacing: '2px'}}>
             {userRole === 'job_seeker' ? 'MY APPLICATIONS' : 'MY POSTED JOBS'}

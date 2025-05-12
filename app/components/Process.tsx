@@ -33,7 +33,7 @@ const Process: React.FC = () => {
   return (
     <motion.section 
       id="process" 
-      className="relative min-h-screen flex items-center bg-[#181818] border-t border-[#ff8800]/20 pt-16 sm:pt-0"
+      className="relative min-h-screen flex items-center pt-16 sm:pt-0"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: true }}

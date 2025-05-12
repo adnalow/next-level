@@ -19,7 +19,7 @@ const businessFeatures = [
 
 const ForWho = () => {
   return (
-    <section id="for-who" className="min-h-screen flex items-center relative bg-transparent pt-16 sm:pt-0">
+    <section id="for-who" className="min-h-screen flex items-center relative pt-16 sm:pt-0">
       <div className="container mx-auto px-4 sm:px-6">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
           {/* For Job Seekers */}
