@@ -248,86 +248,88 @@ export default function ApplicationsPage() {
             ) : (
               <>
                 {/* Search & Filters (Unified for both job posters and job seekers) */}
-                <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 mb-8 w-full">
-                  <div className="relative flex-1 max-w-xl min-w-0">
-                    <Input
-                      placeholder="Search jobs..."
-                      value={search}
-                      onChange={e => setSearch(e.target.value)}
-                      className="w-full bg-[#181818] text-white border-2 border-[#ff8000] rounded-none h-12 px-12 text-base focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] transition-all duration-150 shadow-none"
-                      style={{ boxShadow: 'none' }}
-                    />
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0Z" /></svg>
-                    </span>
+                <div className="flex flex-col gap-3 [@media(min-width:950px)]:flex-row [@media(min-width:950px)]:items-center [@media(min-width:950px)]:gap-4 mb-8 w-full">
+                  <div className="flex flex-col [@media(min-width:950px)]:flex-row gap-3 w-full">
+                    <div className="relative flex-1 min-w-0">
+                      <Input
+                        placeholder="Search jobs..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        className="w-full bg-[#181818] text-white border-2 border-[#ff8000] rounded-none h-12 px-12 text-base focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] transition-all duration-150 shadow-none"
+                        style={{ boxShadow: 'none' }}
+                      />
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0Z" /></svg>
+                      </span>
+                    </div>
+                    <div className="flex flex-col [@media(min-width:950px)]:flex-row gap-3 w-full [@media(min-width:950px)]:w-auto">
+                      <Select value={category} onValueChange={setCategory}>
+                        <SelectTrigger className="w-full [@media(min-width:950px)]:w-48 h-12 bg-[#181818] text-white border-2 border-[#ff8000] rounded-none pl-12 focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] relative min-h-[3rem]" style={{height: '3rem'}}>
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+                          </span>
+                          <SelectValue placeholder="All Categories" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#232323] text-white">
+                          <SelectItem value="all">All Categories</SelectItem>
+                          {jobCategories.map(cat => (
+                            <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Select value={location} onValueChange={setLocation}>
+                        <SelectTrigger className="w-full [@media(min-width:950px)]:w-48 h-12 bg-[#181818] text-white border-2 border-[#ff8000] rounded-none pl-12 focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] relative min-h-[3rem]" style={{height: '3rem'}}>
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 12.414A6 6 0 1 0 12.414 13.414l4.243 4.243a1 1 0 0 0 1.414-1.414Z" /></svg>
+                          </span>
+                          <SelectValue placeholder="All Locations" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#232323] text-white">
+                          <SelectItem value="all">All Locations</SelectItem>
+                          {(userRole === 'job_poster' ? locations : applicationLocations).map(loc => (
+                            <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Select value={status} onValueChange={setStatus}>
+                        <SelectTrigger className="w-full [@media(min-width:950px)]:w-48 h-12 bg-[#181818] text-white border-2 border-[#ff8000] rounded-none pl-12 focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] relative min-h-[3rem]" style={{height: '3rem'}}>
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3" /></svg>
+                          </span>
+                          <SelectValue placeholder="All Statuses" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#232323] text-white">
+                          <SelectItem value="all">All Statuses</SelectItem>
+                          {userRole === 'job_poster' ? (
+                            <>
+                              <SelectItem value="open">Open</SelectItem>
+                              <SelectItem value="closed">Closed</SelectItem>
+                            </>
+                          ) : (
+                            <>
+                              <SelectItem value="applied">Applied</SelectItem>
+                              <SelectItem value="in_progress">In Progress</SelectItem>
+                              <SelectItem value="completed">Completed</SelectItem>
+                              <SelectItem value="declined">Declined</SelectItem>
+                            </>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                  <div className="flex flex-row gap-2 w-full md:w-auto">
-                    <Select value={category} onValueChange={setCategory}>
-                      <SelectTrigger className="w-full md:w-48 h-12 bg-[#181818] text-white border-2 border-[#ff8000] rounded-none pl-12 focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] relative min-h-[3rem]" style={{height: '3rem'}}>
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-                        </span>
-                        <SelectValue placeholder="All Categories" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#232323] text-white">
-                        <SelectItem value="all">All Categories</SelectItem>
-                        {jobCategories.map(cat => (
-                          <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Select value={location} onValueChange={setLocation}>
-                      <SelectTrigger className="w-full md:w-48 h-12 bg-[#181818] text-white border-2 border-[#ff8000] rounded-none pl-12 focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] relative min-h-[3rem]" style={{height: '3rem'}}>
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 12.414A6 6 0 1 0 12.414 13.414l4.243 4.243a1 1 0 0 0 1.414-1.414Z" /></svg>
-                        </span>
-                        <SelectValue placeholder="All Locations" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#232323] text-white">
-                        <SelectItem value="all">All Locations</SelectItem>
-                        {(userRole === 'job_poster' ? locations : applicationLocations).map(loc => (
-                          <SelectItem key={loc} value={loc}>{loc}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Select value={status} onValueChange={setStatus}>
-                      <SelectTrigger className="w-full md:w-48 h-12 bg-[#181818] text-white border-2 border-[#ff8000] rounded-none pl-12 focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] relative min-h-[3rem]" style={{height: '3rem'}}>
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3" /></svg>
-                        </span>
-                        <SelectValue placeholder="All Statuses" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#232323] text-white">
-                        <SelectItem value="all">All Statuses</SelectItem>
-                        {userRole === 'job_poster' ? (
-                          <>
-                            <SelectItem value="open">Open</SelectItem>
-                            <SelectItem value="closed">Closed</SelectItem>
-                          </>
-                        ) : (
-                          <>
-                            <SelectItem value="applied">Applied</SelectItem>
-                            <SelectItem value="in_progress">In Progress</SelectItem>
-                            <SelectItem value="completed">Completed</SelectItem>
-                            <SelectItem value="declined">Declined</SelectItem>
-                          </>
-                        )}
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      variant="outline"
-                      className="h-12 w-full md:w-48 px-5 font-bold border-2 border-[#ff8000] text-white bg-[#ff8000] transition-all duration-150 rounded-none flex items-center justify-center min-h-[3rem] hover:bg-[#ff9900] hover:text-black hover:border-[#ff9900] focus:outline-none"
-                      style={{ minWidth: '12rem', backgroundColor: '#ff8000', color: '#fff', borderColor: '#ff8000', height: '3rem' }}
-                      onClick={() => {
-                        setSearch('');
-                        setCategory('all');
-                        setLocation('all');
-                        setStatus('all');
-                      }}
-                    >
-                      Clear Filters
-                    </Button>
-                  </div>
+                  <Button
+                    variant="outline"
+                    className="h-12 w-full [@media(min-width:950px)]:w-48 px-5 font-bold border-2 border-[#ff8000] text-white bg-[#ff8000] transition-all duration-150 rounded-none flex items-center justify-center min-h-[3rem] hover:bg-[#ff9900] hover:text-black hover:border-[#ff9900] focus:outline-none mt-2 [@media(min-width:950px)]:mt-0"
+                    style={{ minWidth: '12rem', backgroundColor: '#ff8000', color: '#fff', borderColor: '#ff8000', height: '3rem' }}
+                    onClick={() => {
+                      setSearch('');
+                      setCategory('all');
+                      setLocation('all');
+                      setStatus('all');
+                    }}
+                  >
+                    Clear Filters
+                  </Button>
                 </div>
                 {/* Grouped by Category, Collapsible */}
                 <div className="space-y-6">
@@ -396,86 +398,88 @@ export default function ApplicationsPage() {
             ) : (
               <>
                 {/* Search & Filters (Unified for both job posters and job seekers) */}
-                <div className="flex flex-col md:flex-row md:items-center gap-3 md:gap-4 mb-8 w-full">
-                  <div className="relative flex-1 max-w-xl min-w-0">
-                    <Input
-                      placeholder="Search jobs..."
-                      value={search}
-                      onChange={e => setSearch(e.target.value)}
-                      className="w-full bg-[#181818] text-white border-2 border-[#ff8000] rounded-none h-12 px-12 text-base focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] transition-all duration-150 shadow-none"
-                      style={{ boxShadow: 'none' }}
-                    />
-                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0Z" /></svg>
-                    </span>
+                <div className="flex flex-col gap-3 [@media(min-width:950px)]:flex-row [@media(min-width:950px)]:items-center [@media(min-width:950px)]:gap-4 mb-8 w-full">
+                  <div className="flex flex-col [@media(min-width:950px)]:flex-row gap-3 w-full">
+                    <div className="relative flex-1 min-w-0">
+                      <Input
+                        placeholder="Search jobs..."
+                        value={search}
+                        onChange={e => setSearch(e.target.value)}
+                        className="w-full bg-[#181818] text-white border-2 border-[#ff8000] rounded-none h-12 px-12 text-base focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] transition-all duration-150 shadow-none"
+                        style={{ boxShadow: 'none' }}
+                      />
+                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-4.35-4.35M17 11A6 6 0 1 1 5 11a6 6 0 0 1 12 0Z" /></svg>
+                      </span>
+                    </div>
+                    <div className="flex flex-col [@media(min-width:950px)]:flex-row gap-3 w-full [@media(min-width:950px)]:w-auto">
+                      <Select value={category} onValueChange={setCategory}>
+                        <SelectTrigger className="w-full [@media(min-width:950px)]:w-48 h-12 bg-[#181818] text-white border-2 border-[#ff8000] rounded-none pl-12 focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] relative min-h-[3rem]" style={{height: '3rem'}}>
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
+                          </span>
+                          <SelectValue placeholder="All Categories" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#232323] text-white">
+                          <SelectItem value="all">All Categories</SelectItem>
+                          {jobCategories.map(cat => (
+                            <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Select value={location} onValueChange={setLocation}>
+                        <SelectTrigger className="w-full [@media(min-width:950px)]:w-48 h-12 bg-[#181818] text-white border-2 border-[#ff8000] rounded-none pl-12 focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] relative min-h-[3rem]" style={{height: '3rem'}}>
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 12.414A6 6 0 1 0 12.414 13.414l4.243 4.243a1 1 0 0 0 1.414-1.414Z" /></svg>
+                          </span>
+                          <SelectValue placeholder="All Locations" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#232323] text-white">
+                          <SelectItem value="all">All Locations</SelectItem>
+                          {(userRole === 'job_poster' ? locations : applicationLocations).map(loc => (
+                            <SelectItem key={loc} value={loc}>{loc}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Select value={status} onValueChange={setStatus}>
+                        <SelectTrigger className="w-full [@media(min-width:950px)]:w-48 h-12 bg-[#181818] text-white border-2 border-[#ff8000] rounded-none pl-12 focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] relative min-h-[3rem]" style={{height: '3rem'}}>
+                          <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3" /></svg>
+                          </span>
+                          <SelectValue placeholder="All Statuses" />
+                        </SelectTrigger>
+                        <SelectContent className="bg-[#232323] text-white">
+                          <SelectItem value="all">All Statuses</SelectItem>
+                          {userRole === 'job_poster' ? (
+                            <>
+                              <SelectItem value="open">Open</SelectItem>
+                              <SelectItem value="closed">Closed</SelectItem>
+                            </>
+                          ) : (
+                            <>
+                              <SelectItem value="applied">Applied</SelectItem>
+                              <SelectItem value="in_progress">In Progress</SelectItem>
+                              <SelectItem value="completed">Completed</SelectItem>
+                              <SelectItem value="declined">Declined</SelectItem>
+                            </>
+                          )}
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
-                  <div className="flex flex-row gap-2 w-full md:w-auto">
-                    <Select value={category} onValueChange={setCategory}>
-                      <SelectTrigger className="w-full md:w-48 h-12 bg-[#181818] text-white border-2 border-[#ff8000] rounded-none pl-12 focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] relative min-h-[3rem]" style={{height: '3rem'}}>
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" /></svg>
-                        </span>
-                        <SelectValue placeholder="All Categories" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#232323] text-white">
-                        <SelectItem value="all">All Categories</SelectItem>
-                        {jobCategories.map(cat => (
-                          <SelectItem key={cat.value} value={cat.value}>{cat.label}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Select value={location} onValueChange={setLocation}>
-                      <SelectTrigger className="w-full md:w-48 h-12 bg-[#181818] text-white border-2 border-[#ff8000] rounded-none pl-12 focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] relative min-h-[3rem]" style={{height: '3rem'}}>
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 12.414A6 6 0 1 0 12.414 13.414l4.243 4.243a1 1 0 0 0 1.414-1.414Z" /></svg>
-                        </span>
-                        <SelectValue placeholder="All Locations" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#232323] text-white">
-                        <SelectItem value="all">All Locations</SelectItem>
-                        {(userRole === 'job_poster' ? locations : applicationLocations).map(loc => (
-                          <SelectItem key={loc} value={loc}>{loc}</SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                    <Select value={status} onValueChange={setStatus}>
-                      <SelectTrigger className="w-full md:w-48 h-12 bg-[#181818] text-white border-2 border-[#ff8000] rounded-none pl-12 focus:ring-2 focus:ring-[#ff8000] focus:border-[#ff8000] relative min-h-[3rem]" style={{height: '3rem'}}>
-                        <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[#ff8000]">
-                          <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="#ff8000"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3" /></svg>
-                        </span>
-                        <SelectValue placeholder="All Statuses" />
-                      </SelectTrigger>
-                      <SelectContent className="bg-[#232323] text-white">
-                        <SelectItem value="all">All Statuses</SelectItem>
-                        {userRole === 'job_poster' ? (
-                          <>
-                            <SelectItem value="open">Open</SelectItem>
-                            <SelectItem value="closed">Closed</SelectItem>
-                          </>
-                        ) : (
-                          <>
-                            <SelectItem value="applied">Applied</SelectItem>
-                            <SelectItem value="in_progress">In Progress</SelectItem>
-                            <SelectItem value="completed">Completed</SelectItem>
-                            <SelectItem value="declined">Declined</SelectItem>
-                          </>
-                        )}
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      variant="outline"
-                      className="h-12 w-full md:w-48 px-5 font-bold border-2 border-[#ff8000] text-white bg-[#ff8000] transition-all duration-150 rounded-none flex items-center justify-center min-h-[3rem] hover:bg-[#ff9900] hover:text-black hover:border-[#ff9900] focus:outline-none"
-                      style={{ minWidth: '12rem', backgroundColor: '#ff8000', color: '#fff', borderColor: '#ff8000', height: '3rem' }}
-                      onClick={() => {
-                        setSearch('');
-                        setCategory('all');
-                        setLocation('all');
-                        setStatus('all');
-                      }}
-                    >
-                      Clear Filters
-                    </Button>
-                  </div>
+                  <Button
+                    variant="outline"
+                    className="h-12 w-full [@media(min-width:950px)]:w-48 px-5 font-bold border-2 border-[#ff8000] text-white bg-[#ff8000] transition-all duration-150 rounded-none flex items-center justify-center min-h-[3rem] hover:bg-[#ff9900] hover:text-black hover:border-[#ff9900] focus:outline-none mt-2 [@media(min-width:950px)]:mt-0"
+                    style={{ minWidth: '12rem', backgroundColor: '#ff8000', color: '#fff', borderColor: '#ff8000', height: '3rem' }}
+                    onClick={() => {
+                      setSearch('');
+                      setCategory('all');
+                      setLocation('all');
+                      setStatus('all');
+                    }}
+                  >
+                    Clear Filters
+                  </Button>
                 </div>
                 {/* Grouped by Category, Collapsible */}
                 <div className="space-y-6">

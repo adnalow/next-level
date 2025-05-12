@@ -125,8 +125,7 @@ export function Navbar() {
               <DropdownMenuSeparator className="border-t border-orange-500/40 my-1" />
               <DropdownMenuItem
                 onClick={handleSignOut}
-                className="py-3 px-4 text-lg font-semibold text-orange-300 hover:bg-orange-500/10 hover:text-white transition-colors cursor-pointer rounded"
-                variant="destructive"
+                className="py-3 px-4 text-lg font-semibold text-white hover:bg-orange-500/10 hover:text-orange-500 transition-colors cursor-pointer rounded"
               >
                 Sign Out
               </DropdownMenuItem>
