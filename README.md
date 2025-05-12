@@ -1,4 +1,4 @@
-# 🚀 Next Level Website
+# 🚀 Next Level
 
 **Next Level** is a modern web platform built with **Next.js** that bridges the gap between job seekers, apprentices, and employers. It provides an intuitive interface for managing job listings, applying to apprenticeships, and showcasing earned badges—all within an accessible and responsive environment.
 
@@ -24,7 +24,7 @@
 | TypeScript     | Type safety and improved developer experience |
 | Tailwind CSS   | Utility-first CSS for rapid UI development |
 | Supabase       | Backend services: database and authentication |
-| Custom UI      | Modular and accessible interface components |
+| Shadcn(Custom UI)      | Modular and accessible interface components |
 
 ---
 
@@ -33,8 +33,8 @@
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-org/next-level-website.git
-cd next-level-website
+git clone https://github.com/adnalow/next-level
+cd next-level
 ````
 
 ### 2. Install Dependencies
@@ -64,7 +64,7 @@ Open your browser and navigate to:
 
 ## 🙏 Acknowledgements
 
-Special thanks to the open-source community and contributors whose tools and libraries made this project possible—including the teams behind **Next.js**, **Supabase**, **Tailwind CSS**, and many more.
+(pending)
 
 ---
 
