@@ -318,7 +318,6 @@ export default function ApplicationsPage() {
                     </div>
                   </div>
                   <Button
-                    variant="outline"
                     className="h-12 w-full [@media(min-width:950px)]:w-48 px-5 font-bold border-2 border-[#ff8000] text-white bg-[#ff8000] transition-all duration-150 rounded-none flex items-center justify-center min-h-[3rem] hover:bg-[#ff9900] hover:text-black hover:border-[#ff9900] focus:outline-none mt-2 [@media(min-width:950px)]:mt-0"
                     style={{ minWidth: '12rem', backgroundColor: '#ff8000', color: '#fff', borderColor: '#ff8000', height: '3rem' }}
                     onClick={() => {
@@ -468,7 +467,6 @@ export default function ApplicationsPage() {
                     </div>
                   </div>
                   <Button
-                    variant="outline"
                     className="h-12 w-full [@media(min-width:950px)]:w-48 px-5 font-bold border-2 border-[#ff8000] text-white bg-[#ff8000] transition-all duration-150 rounded-none flex items-center justify-center min-h-[3rem] hover:bg-[#ff9900] hover:text-black hover:border-[#ff9900] focus:outline-none mt-2 [@media(min-width:950px)]:mt-0"
                     style={{ minWidth: '12rem', backgroundColor: '#ff8000', color: '#fff', borderColor: '#ff8000', height: '3rem' }}
                     onClick={() => {

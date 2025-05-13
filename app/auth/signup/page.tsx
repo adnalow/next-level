@@ -99,7 +99,11 @@ export default function SignUpPage() {
   }
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return (
+      <div className="min-h-screen w-full">
+        <LoadingScreen />
+      </div>
+    );
   }
 
   return (

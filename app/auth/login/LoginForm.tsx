@@ -95,7 +95,11 @@ export default function LoginForm() {
   }
 
   if (isLoading) {
-    return <LoadingScreen />;
+    return (
+      <div className="min-h-screen w-full">
+        <LoadingScreen />
+      </div>
+    );
   }
 
   return (
