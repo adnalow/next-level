@@ -266,7 +266,7 @@ export default function BadgeShowcasePage() {
         {/* Badge Modal */}
         {selectedBadge && (
           <div
-            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-10 animate-fade-in"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-10 animate-fade-in px-2 sm:px-0" // Add px-2 for mobile padding
             role="dialog"
             aria-modal="true"
             aria-label={`Badge: ${selectedBadge.badge.title}, acquired on ${new Date(selectedBadge.acquired_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}`}
@@ -276,12 +276,12 @@ export default function BadgeShowcasePage() {
             }}
           >
             <div
-              className="relative bg-[#232323] border-4 border-[#ff8000] rounded-xl p-6 sm:p-10 w-full max-w-lg flex flex-col items-center shadow-2xl animate-fade-in modal-content transition-all duration-300"
+              className="relative bg-[#232323] border-4 border-[#ff8000] rounded-xl p-4 sm:p-10 w-full max-w-lg flex flex-col items-center shadow-2xl animate-fade-in modal-content transition-all duration-300"
               style={{ boxShadow: '0 8px 40px 0 rgba(0,0,0,0.7)', background: 'linear-gradient(135deg, #232323 80%, #282828 100%)' }}
             >
               {/* Close button */}
               <button
-                className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center border-2 border-[#ff8000] rounded-full text-[#ff8000] text-2xl font-bold hover:bg-[#ff8000] hover:text-black focus:outline-none focus:ring-2 focus:ring-[#ff8000] transition-colors duration-150 shadow-lg"
+                className="absolute top-2 right-2 sm:top-4 sm:right-4 w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center border-2 border-[#ff8000] rounded-full text-[#ff8000] text-xl sm:text-2xl font-bold hover:bg-[#ff8000] hover:text-black focus:outline-none focus:ring-2 focus:ring-[#ff8000] transition-colors duration-150 shadow-lg"
                 onClick={closeBadgeModal}
                 aria-label="Close badge details"
                 tabIndex={0}
@@ -290,23 +290,23 @@ export default function BadgeShowcasePage() {
                 ×
               </button>
               {/* Badge SVG and Title with improved layout for long names */}
-              <div className="flex flex-col sm:flex-row items-center mb-6 w-full gap-4 sm:gap-6">
+              <div className="flex flex-col sm:flex-row items-center mb-4 sm:mb-6 w-full gap-3 sm:gap-6">
                 <span
                   className="flex items-center justify-center mx-auto sm:mx-0"
                   tabIndex={0}
                   aria-label="Badge icon"
                 >
                   <span
-                    className="w-24 h-24 rounded-full border-2 border-[#ff8000] bg-[#232323] flex items-center justify-center transition-transform duration-200 hover:scale-110 hover:shadow-[0_0_24px_4px_#ff8000] focus:scale-110 focus:shadow-[0_0_24px_4px_#ff8000] outline-none"
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-full border-2 border-[#ff8000] bg-[#232323] flex items-center justify-center transition-transform duration-200 hover:scale-110 hover:shadow-[0_0_24px_4px_#ff8000] focus:scale-110 focus:shadow-[0_0_24px_4px_#ff8000] outline-none"
                     style={{ display: 'inline-flex' }}
                   >
                     {selectedBadge.badge.svg ? (
                       <span
-                        className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center"
+                        className="w-14 h-14 sm:w-20 sm:h-20 flex items-center justify-center" // scale down for mobile
                         dangerouslySetInnerHTML={{ __html: selectedBadge.badge.svg }}
                       />
                     ) : (
-                      <FontAwesomeIcon icon={faMedal} className="text-[#ff8000] text-4xl sm:text-5xl" />
+                      <FontAwesomeIcon icon={faMedal} className="text-[#ff8000] text-3xl sm:text-5xl" />
                     )}
                   </span>
                 </span>
@@ -315,29 +315,29 @@ export default function BadgeShowcasePage() {
                 </div>
               </div>
               {/* Divider */}
-              <hr className="w-full border-t border-[#393939] mb-4" />
+              <hr className="w-full border-t border-[#393939] mb-3 sm:mb-4" />
               {/* Description with Read More toggle if long */}
               <BadgeDescription description={selectedBadge.badge.description} />
               {/* Acquisition info */}
-              <div className="w-full bg-[#292929] rounded-md py-4 px-4 flex flex-col items-center text-white mt-4 border-t-2 border-[#ff8000]">
-                <div className="text-base font-semibold text-[#ffb347] mb-1">
+              <div className="w-full bg-[#292929] rounded-md py-3 px-2 sm:py-4 sm:px-4 flex flex-col items-center text-white mt-2 sm:mt-4 border-t-2 border-[#ff8000]">
+                <div className="text-sm sm:text-base font-semibold text-[#ffb347] mb-1">
                   Acquisition #{selectedBadge.acquisition_number}
                 </div>
-                <div className="text-base mt-0 text-gray-200">
+                <div className="text-sm sm:text-base mt-0 text-gray-200">
                   Acquired: <span className="text-[#ff8000] font-bold">{new Date(selectedBadge.acquired_at).toLocaleDateString(undefined, { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                 </div>
               </div>
               {/* --- JOB INFO SECTION --- */}
-              <div className="w-full mt-6">
-                <h3 className="text-lg font-bold text-[#ff8000] mb-2 flex items-center gap-2">
+              <div className="w-full mt-4 sm:mt-6">
+                <h3 className="text-base sm:text-lg font-bold text-[#ff8000] mb-2 flex items-center gap-2">
                   <FontAwesomeIcon icon={faBriefcase} className="text-[#ff8000]" /> Job Details
                 </h3>
                 {jobLoading ? (
                   <div className="text-gray-400 text-sm mb-2">Loading job info...</div>
                 ) : jobInfo ? (
-                  <div className="bg-[#181818] rounded-lg p-4 border border-[#393939] text-white text-sm space-y-2">
-                    <div className="font-bold text-base text-[#ffb347] mb-1">{jobInfo.title}</div>
-                    <div className="flex flex-wrap gap-3 mb-1">
+                  <div className="bg-[#181818] rounded-lg p-3 sm:p-4 border border-[#393939] text-white text-xs sm:text-sm space-y-2">
+                    <div className="font-bold text-sm sm:text-base text-[#ffb347] mb-1">{jobInfo.title}</div>
+                    <div className="flex flex-wrap gap-2 sm:gap-3 mb-1">
                       <span className="inline-flex items-center gap-1 bg-[#444] text-white text-xs rounded px-2 py-0.5 capitalize">
                         <FontAwesomeIcon icon={faTag} className="text-[#ff8000]" />
                         {JOB_CATEGORIES.find(c => c.value === jobInfo.category)?.label || jobInfo.category}
@@ -351,7 +351,7 @@ export default function BadgeShowcasePage() {
                         {jobInfo.duration_days} {jobInfo.duration_days === 1 ? 'day' : 'days'}
                       </span>
                     </div>
-                    <div className="text-white/90 text-sm leading-relaxed break-words mb-1">
+                    <div className="text-white/90 text-xs sm:text-sm leading-relaxed break-words mb-1">
                       {jobInfo.description}
                     </div>
                   </div>
