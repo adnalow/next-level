@@ -165,7 +165,7 @@ export default function JobApplicationsPage() {
 
   return (
     <ClientLayout>
-      <div className="min-h-screen bg-[#181818] text-white">
+      <div className="min-h-screen text-white">
         <div className="max-w-5xl mx-auto py-8 px-2 sm:px-4">
           {/* Back link */}
           <div className="flex items-center mb-4">

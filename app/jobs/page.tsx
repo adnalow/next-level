@@ -180,7 +180,7 @@ export default function JobsPage() {
 
   return (
     <ClientLayout>
-      <div className="min-h-screen bg-black text-white flex flex-col items-center">
+      <div className="min-h-screen text-white flex flex-col items-center">
         {/* Available Jobs Banner */}
         <div className="w-full flex justify-center">
           <div className="w-full max-w-[1440px] mt-8 mb-8 bg-[#232323] border border-orange-500 rounded-sm p-4 sm:p-6 md:p-8 flex flex-col gap-6 relative" style={{ boxShadow: 'none' }}>

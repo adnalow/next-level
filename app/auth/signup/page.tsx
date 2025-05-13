@@ -103,7 +103,7 @@ export default function SignUpPage() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#232526] via-[#414345] to-[#232526] dark:from-[#18181b] dark:via-[#232323] dark:to-[#18181b] transition-colors">
+    <div className="min-h-screen flex flex-col items-center justify-center">
       {/* Branding/logo - centered above form */}
       <div className="flex flex-col items-center justify-center w-full mt-12 mb-6">
         <Link href="/">

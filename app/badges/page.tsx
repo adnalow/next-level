@@ -158,7 +158,7 @@ export default function BadgeShowcasePage() {
 
   return (
     <ClientLayout>
-      <div className="min-h-screen bg-[#202124] text-white flex flex-col items-center py-6 sm:py-12">
+      <div className="min-h-screen text-white flex flex-col items-center py-6 sm:py-12">
         <div className="w-full max-w-6xl bg-[#232323] rounded-lg p-4 sm:p-8" style={{ boxShadow: 'none' }}>
           <h1 className="text-3xl sm:text-4xl font-extrabold mb-1 flex items-center gap-2 text-[#ff8000] tracking-wide drop-shadow-lg">
             <FontAwesomeIcon icon={faMedal} className="text-[#ff8000] text-2xl sm:text-3xl" /> MY BADGES
