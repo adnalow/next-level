@@ -246,7 +246,7 @@ export default function JobsPage() {
               </Select>
               {/* Clear Filters Button */}
               <Button
-                className="h-12 px-5 bg-gradient-to-r from-gray-700 to-orange-500 text-white font-bold rounded border-2 border-orange-500 hover:from-orange-500 hover:to-orange-600 hover:text-black transition-colors mt-2 md:mt-0"
+                className="h-12 px-5 bg-[#ff8000] text-white font-bold rounded border-2 border-[#ff8000] hover:bg-[#ff9900] hover:text-black hover:border-[#ff9900] transition-colors mt-2 md:mt-0"
                 onClick={() => {
                   setSearchTerm('');
                   setDebouncedSearchTerm('');

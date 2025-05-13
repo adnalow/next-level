@@ -153,7 +153,11 @@ export default function JobDetailsPage({ params }: { params: Promise<{ id: strin
   }
 
   if (loading) {
-    return <LoadingScreen />;
+    return (
+      <div className="min-h-screen w-full">
+        <LoadingScreen />
+      </div>
+    );
   }
 
   if (!job) {
